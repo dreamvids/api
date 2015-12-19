@@ -8,7 +8,7 @@ class Request {
 	
 	private function __construct() {
 		$this->args = (isset($_GET['arg']) ) ? explode('/', trim($_GET['arg'], '/')) : ['home'];
-		$this->client = Client::getBy('name', 'Guest');
+		$this->client = APIClient::getBy('name', 'Guest');
 		$this->controller = ucfirst($this->args[0])."Ctrl";
 		$this->method = $_SERVER['REQUEST_METHOD'];
 	}
@@ -67,12 +67,12 @@ class Request {
 		}
 	}
 
-	public function getClient(): Client
+	public function getClient(): APIClient
 	{
 		return $this->client;
 	}
 
-	public function setClient(Client $client)
+	public function setClient(APIClient $client)
 	{
 		$this->client = $client;
 	}

@@ -3,7 +3,7 @@ abstract class DB {
 	private static
 	$instance = null,
 	$db_host = 'localhost',
-	$db_name = 'api',
+	$db_name = 'dreamvids',
 	$db_user = 'root',
 	$db_pass = '';
 	

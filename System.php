@@ -8,7 +8,8 @@ class System
     private $webroot;
     private $system;
     private $app;
-    private $models;
+    private $api_models;
+    private $dv_models;
     private $views;
     private $controllers;
     private $assets;
@@ -25,7 +26,8 @@ class System
         $this->root = str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']);
         $this->system = $this->root.'system/';
         $this->app = $this->root.'app/';
-        $this->models = $this->app.'models/';
+        $this->api_models = $this->app.'models/api/';
+        $this->dv_models = $this->app.'models/dv/';
         $this->views = $this->app.'views/';
         $this->controllers = $this->app.'controllers/';
 
@@ -71,9 +73,14 @@ class System
         return $this->app;
     }
 
-    public function getModels(): string
+    public function getApiModels(): string
     {
-        return $this->models;
+        return $this->api_models;
+    }
+
+    public function getDvModels()
+    {
+        return $this->dv_models;
     }
 
     public function getViews(): string

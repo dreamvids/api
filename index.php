@@ -13,22 +13,24 @@ require_once System::get()->getSystem().'Data.php';
 require_once System::get()->getSystem().'HTTPError.php';
 
 
-// Models
-require_once System::get()->getModels().'Client.php';
-require_once System::get()->getModels().'Controller.php';
-require_once System::get()->getModels().'Permission.php';
-require_once System::get()->getModels().'Rank.php';
-require_once System::get()->getModels().'Token.php';
+// API Models
+require_once System::get()->getApiModels().'APIClient.php';
+require_once System::get()->getApiModels().'APIController.php';
+require_once System::get()->getApiModels().'APIPermission.php';
+require_once System::get()->getApiModels().'APIRank.php';
+require_once System::get()->getApiModels().'APIToken.php';
 
-Token::flush();
+// DreamVids Models
+
+APIToken::flush();
 // TODO: Remplacer 'root' par '' en prod absolument !!
 $tokenString = $_SERVER['HTTP_X_TOKEN'] ?? 'root';
-if (Token::exists('token', $tokenString)) {
-	$token = Token::getBy('token', $tokenString);
-	Request::get()->setClient(new Client($token->client_id));
+if (APIToken::exists('token', $tokenString)) {
+	$token = APIToken::getBy('token', $tokenString);
+	Request::get()->setClient(new APIClient($token->client_id));
 }
 
-$controller = Controller::getBy('uri', Request::get()->getArg(0));
+$controller = APIController::getBy('uri', Request::get()->getArg(0));
 $filename = System::get()->getControllers().$controller->uri.'.php';
 $classname = ucfirst($controller->uri)."Ctrl";
 if (!file_exists($filename) ) {
@@ -44,7 +46,7 @@ require_once System::get()->getSystem().'ControllerInterface.php';
 require_once $filename;
 
 $method = Request::get()->getMethodToCall();
-if (Permission::isPermit($controller, $method)) {
+if (APIPermission::isPermit($controller, $method)) {
 	$classname::$method();
 }
 else {

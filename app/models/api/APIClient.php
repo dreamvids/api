@@ -1,7 +1,7 @@
 <?php
-class Client extends Entry implements ModelInterface
+class APIClient extends Entry implements ModelInterface
 {
-    static $table_name = 'client';
+    static $table_name = 'api_client';
 
     public function __construct(int $id)
     {

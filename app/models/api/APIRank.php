@@ -1,7 +1,7 @@
 <?php
-class Rank extends Entry implements ModelInterface
+class APIRank extends Entry implements ModelInterface
 {
-    static $table_name = 'rank';
+    static $table_name = 'api_rank';
 
     public function __construct(int $id)
     {
