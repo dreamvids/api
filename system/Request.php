@@ -25,6 +25,8 @@ class Request {
 		if ($this->countArgs() > $i) {
 			return $this->args[$i];
 		}
+
+		return null;
 	}
 
 	public function countArgs(): int {
