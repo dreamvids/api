@@ -1,6 +1,5 @@
 <?php
 
-trait FlagTrait
-{
+trait FlagTrait {
     //TODO
 }

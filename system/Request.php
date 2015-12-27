@@ -26,7 +26,7 @@ class Request {
 			return $this->args[$i];
 		}
 
-		return null;
+		return '';
 	}
 
 	public function countArgs(): int {
