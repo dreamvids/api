@@ -69,18 +69,15 @@ class Request {
 		}
 	}
 
-	public function getClient(): APIClient
-	{
+	public function getClient(): APIClient {
 		return $this->client;
 	}
 
-	public function setClient(APIClient $client)
-	{
+	public function setClient(APIClient $client) {
 		$this->client = $client;
 	}
 
-	public function getMethod(): string
-	{
+	public function getMethod(): string	{
 		return $this->method;
 	}
 }

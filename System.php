@@ -1,6 +1,5 @@
 <?php
-class System
-{
+class System {
     private static $instance = null;
 
     private $name;
@@ -18,8 +17,7 @@ class System
     private $fonts;
     private $img;
 
-    private function __construct()
-    {
+    private function __construct() {
         $this->name = 'API';
 
         // Back-End
@@ -48,73 +46,59 @@ class System
         return self::$instance;
     }
 
-    public function getName(): string
-    {
+    public function getName() {
         return $this->name;
     }
 
-    public function getRoot(): string
-    {
+    public function getRoot() {
         return $this->root;
     }
 
-    public function getWebroot(): string
-    {
+    public function getWebroot() {
         return $this->webroot;
     }
 
-    public function getSystem(): string
-    {
+    public function getSystem() {
         return $this->system;
     }
 
-    public function getApp(): string
-    {
+    public function getApp() {
         return $this->app;
     }
 
-    public function getApiModels(): string
-    {
+    public function getApiModels() {
         return $this->api_models;
     }
 
-    public function getDvModels()
-    {
+    public function getDvModels() {
         return $this->dv_models;
     }
 
-    public function getViews(): string
-    {
+    public function getViews() {
         return $this->views;
     }
 
-    public function getControllers(): string
-    {
+    public function getControllers() {
         return $this->controllers;
     }
 
-    public function getAssets(): string
-    {
+    public function getAssets() {
         return $this->assets;
     }
 
-    public function getCss(): string
-    {
+    public function getCss() {
         return $this->css;
     }
 
-    public function getJs(): string
-    {
+    public function getJs() {
         return $this->js;
     }
 
-    public function getFonts(): string
-    {
+    public function getFonts() {
         return $this->fonts;
     }
 
-    public function getImg(): string
-    {
+    public function getImg() {
         return $this->img;
     }
 }

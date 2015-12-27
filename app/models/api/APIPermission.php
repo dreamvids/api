@@ -1,10 +1,8 @@
 <?php
-class APIPermission extends Entry implements ModelInterface
-{
+class APIPermission extends Entry implements ModelInterface {
     static $table_name = 'api_permission';
 
-    public function __construct(int $id)
-    {
+    public function __construct(int $id) {
         parent::__construct($id);
     }
 

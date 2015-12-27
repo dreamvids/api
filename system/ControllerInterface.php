@@ -1,6 +1,5 @@
 <?php
-interface ControllerInterface
-{
+interface ControllerInterface {
     public static function create();
     public static function fetch();
     public static function exists();

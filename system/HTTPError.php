@@ -1,6 +1,5 @@
 <?php
-class HTTPError
-{
+class HTTPError {
     public static function AuthorizationRequired() {
         header('HTTP/1.1 401 Authorization Required');
     }

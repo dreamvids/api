@@ -1,10 +1,8 @@
 <?php
-class APIToken extends Entry implements ModelInterface
-{
+class APIToken extends Entry implements ModelInterface {
     static $table_name = 'api_token';
 
-    public function __construct(int $id)
-    {
+    public function __construct(int $id) {
         parent::__construct($id);
     }
 

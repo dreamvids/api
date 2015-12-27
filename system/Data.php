@@ -3,7 +3,7 @@ class Data {
 	private static $instance = null;
 	private $data;
 	
-	private function __construct(){
+	private function __construct() {
 		$this->data = [];
 	}
 	
