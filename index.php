@@ -2,23 +2,8 @@
 // System constants
 require_once 'System.php';
 
-// System requires
-require_once System::get()->getSystem().'Database.php';
-require_once System::get()->getSystem().'ModelInterface.php';
-require_once System::get()->getSystem().'Model.php';
-require_once System::get()->getSystem().'Entry.php';
-require_once System::get()->getSystem().'Utils.php';
-require_once System::get()->getSystem().'Request.php';
-require_once System::get()->getSystem().'Data.php';
-require_once System::get()->getSystem().'HTTPError.php';
-
-
-// API Models
-require_once System::get()->getApiModels().'APIClient.php';
-require_once System::get()->getApiModels().'APIController.php';
-require_once System::get()->getApiModels().'APIPermission.php';
-require_once System::get()->getApiModels().'APIRank.php';
-require_once System::get()->getApiModels().'APIToken.php';
+// System and api models requires
+System::get()->loadDependencies(['system', 'api_models']);
 
 // DreamVids Models
 
