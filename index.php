@@ -13,10 +13,15 @@ if (APIToken::exists('token', $tokenString)) {
 }
 
 $controller = APIController::getBy('uri', Request::get()->getArg(0));
+
+if(is_null($controller)){
+	HTTPError::NotFound()->render();
+}
+
 $filename = System::get()->getControllers().$controller->uri.'.php';
 $classname = ucfirst($controller->uri)."Ctrl";
 if (!file_exists($filename) ) {
-	HTTPError::NotFound();
+	HTTPError::NotFound()->render();
 	exit();
 }
 
@@ -28,11 +33,16 @@ require_once System::get()->getSystem().'ControllerInterface.php';
 require_once $filename;
 
 $method = Request::get()->getMethodToCall();
+
+if($method == ''){
+	HTTPError::MethodNotAllowed()->render();
+}
+
 if (APIPermission::isPermit($controller, $method)) {
 	$classname::$method();
 }
 else {
-	HTTPError::Forbidden();
+	HTTPError::Forbidden()->render();
 }
 
 Request::get()->sendJSON();

@@ -35,13 +35,10 @@ class Request {
 
 	public function sendJSON() {
 		$data = Data::get()->getData();
-		header('Content-Type: application/json; charset=utf-8');
-
+		$response = new Response($data, 200);
+		$response->render();
 		//Dev
 		//var_dump($data);
-
-		//Prod
-		echo json_encode($data);
 	}
 
 	public function getMethodToCall(): string {
@@ -56,7 +53,7 @@ class Request {
 					'DELETE' => 'delete'
 				];
 
-				return $methods[$this->method];
+				return $methods[$this->method] ?? '';
 			}
 		}
 		else {
@@ -65,7 +62,7 @@ class Request {
 				'GET' => 'fetch'
 			];
 
-			return $methods[$this->method];
+			return $methods[$this->method] ?? '';
 		}
 	}
 

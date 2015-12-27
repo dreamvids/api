@@ -1,22 +1,22 @@
 <?php
 class HTTPError {
     public static function AuthorizationRequired() {
-        header('HTTP/1.1 401 Authorization Required');
+        return new Response([], 401);
     }
 
     public static function Forbidden() {
-        header('HTTP/1.1 403 Forbidden');
+        return new Response([], 403);
     }
 
     public static function NotFound() {
-        header('HTTP/1.1 404 Not Found');
+        return new Response([], 404);
     }
 
     public static function MethodNotAllowed() {
-        header('HTTP/1.1 405 Method Not Allowed');
+        return new Response([], 405);
     }
 
     public static function InternalServerError() {
-        header('HTTP/1.1 500 Internal Server Error');
+        return new Response([], 500);
     }
 }
