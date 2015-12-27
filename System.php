@@ -11,6 +11,7 @@ class System {
     private $dv_models;
     private $views;
     private $controllers;
+    private $traits;
     private $assets;
     private $css;
     private $js;
@@ -31,7 +32,8 @@ class System {
         $this->dv_models = $this->app.'models/dv/';
         $this->views = $this->app.'views/';
         $this->controllers = $this->app.'controllers/';
-
+        $this->api_models = $this->app.'models/api/';
+        $this->traits = $this->app.'traits/';
         // Front-End
         $this->webroot = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
         $this->assets = $this->webroot.'assets/';
@@ -57,12 +59,22 @@ class System {
                 'APIPermission',
                 'APIRank',
                 'APIToken'
+            ],
+            'dv_models' => [
+                'Rank',
+                'User'
+            ],
+            'traits' => [
+                'FlagTrait',
+                'FlushTrait'
             ]
         ];
 
         $this->dependenciesPaths = [
             'system' => $this->getSystem(),
-            'api_models' => $this->getApiModels()
+            'traits' => $this->getTraits(),
+            'api_models' => $this->getApiModels(),
+            'dv_models' => $this->getDvModels()
         ];
     }
 
@@ -102,12 +114,17 @@ class System {
         return $this->dv_models;
     }
 
+
     public function getViews() {
         return $this->views;
     }
 
     public function getControllers() {
         return $this->controllers;
+    }
+
+    public function getTraits(){
+        return $this->traits;
     }
 
     public function getAssets() {

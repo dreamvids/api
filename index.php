@@ -1,11 +1,8 @@
 <?php
 // System constants
 require_once 'System.php';
-
-// System and api models requires
-System::get()->loadDependencies(['system', 'api_models']);
-
-// DreamVids Models
+// All requires
+System::get()->loadDependencies(['system', 'traits', 'api_models', 'dv_models']);
 
 APIToken::flush();
 // TODO: Remplacer 'root' par '' en prod absolument !!

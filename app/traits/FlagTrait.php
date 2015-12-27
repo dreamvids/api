@@ -1,0 +1,6 @@
+<?php
+
+trait FlagTrait
+{
+    //TODO
+}
