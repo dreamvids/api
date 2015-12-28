@@ -33,13 +33,13 @@ class Request {
 		return count($this->args);
 	}
 
-	public function sendJSON() {
+	/*public function sendJSON() {
 		$data = Data::get()->getData();
 		$response = new Response($data, 200);
 		$response->render();
 		//Dev
 		//var_dump($data);
-	}
+	}*/
 
 	public function getMethodToCall(): string {
 		if ($this->countArgs() > 1) {

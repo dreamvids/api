@@ -12,6 +12,7 @@ if (APIToken::exists('token', $tokenString)) {
 	Request::get()->setClient(new APIClient($token->client_id));
 }
 
+Response::get();
 $controller = APIController::getBy('uri', Request::get()->getArg(0));
 
 if(is_null($controller)){
@@ -32,6 +33,7 @@ if (!in_array(Request::get()->getMethod(), array('GET', 'POST'))) {
 require_once System::get()->getSystem().'ControllerInterface.php';
 require_once $filename;
 
+
 $method = Request::get()->getMethodToCall();
 
 if($method == ''){
@@ -45,4 +47,4 @@ else {
 	HTTPError::Forbidden()->render();
 }
 
-Request::get()->sendJSON();
+Response::get()->render();

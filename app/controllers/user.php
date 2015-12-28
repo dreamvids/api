@@ -1,7 +1,47 @@
 <?php
 class UserCtrl implements ControllerInterface {
     public static function create() {
-        if (isset($_POST['username'], $_POST['email'], $_POST['pass'], $_POST['pass_confirm'])) {
+        $validation = new Validator([
+            '_all' => [
+                'required' => true,
+                '_messages' => [
+                    'required' => 'All fields must be filled'
+                ]
+            ],
+            'username' => [
+                'custom' => function($value){ return !User::usernameExists($value); },
+                '_messages' => [
+                    'custom' => 'Username already taken'
+                ]
+            ],
+            'email' => [
+                'custom' => function($value){ return !User::emailExists($value); },
+                'type' => Validator::TYPE_EMAIL,
+                '_messages' => [
+                    'custom' => 'E-mail address already registered',
+                    'type' => 'Invalid E-Mail address'
+                ]
+            ],
+            'pass' => [],
+            'pass_confirm' => [
+                'same' => 'pass',
+                '_messages' => [
+                    'same' => 'Passwords must match'
+                ]
+            ]
+        ], $_POST);
+
+        if($validation->validate()){
+            User::insertIntoDb([$_POST['username'], $_POST['pass'], $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
+            Response::get()->addData('success', true);
+        }else{
+            Response::get()->setErrors($validation->getErrors());
+            Response::get()->addData('success', false);
+
+            HTTPError::BadRequest();
+        }
+
+       /* if (isset($_POST['username'], $_POST['email'], $_POST['pass'], $_POST['pass_confirm'])) {
             if (!User::usernameExists($_POST['username'])) {
                 if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                     if (!User::emailExists($_POST['email'])) {
@@ -32,7 +72,7 @@ class UserCtrl implements ControllerInterface {
         if (isset($err)) {
             Data::get()->add('success', false);
             Data::get()->add('error', $err);
-        }
+        }*/
     }
 
     public static function fetch() {
