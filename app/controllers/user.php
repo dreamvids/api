@@ -32,47 +32,14 @@ class UserCtrl implements ControllerInterface {
         ], $_POST);
 
         if($validation->validate()){
-            User::insertIntoDb([$_POST['username'], $_POST['pass'], $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
-            Response::get()->addData('success', true);
+            User::insertIntoDb([$_POST['username'], password_hash($_POST['pass'], PASSWORD_BCRYPT), $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
         }else{
             Response::get()->setErrors($validation->getErrors());
-            Response::get()->addData('success', false);
+            Response::get()->setSuccess(false);
 
             HTTPError::BadRequest();
         }
 
-       /* if (isset($_POST['username'], $_POST['email'], $_POST['pass'], $_POST['pass_confirm'])) {
-            if (!User::usernameExists($_POST['username'])) {
-                if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-                    if (!User::emailExists($_POST['email'])) {
-                        if ($_POST['pass'] == $_POST['pass_confirm']) {
-                            User::insertIntoDb([$_POST['username'], $_POST['pass'], $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
-                            Data::get()->add('success', true);
-                        }
-                        else {
-                            $err = 'Passwords must match';
-                        }
-                    }
-                    else {
-                        $err = 'E-Mail address already registered';
-                    }
-                }
-                else {
-                    $err = 'Invalid E-Mail address';
-                }
-            }
-            else {
-                $err = 'Username already taken';
-            }
-        }
-        else {
-            $err = 'All fields must be filled';
-        }
-
-        if (isset($err)) {
-            Data::get()->add('success', false);
-            Data::get()->add('error', $err);
-        }*/
     }
 
     public static function fetch() {

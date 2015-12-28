@@ -50,7 +50,6 @@ class System {
                 'Entry',
                 'Utils',
                 'Request',
-                //'Data',
                 'HTTPError',
                 'Response',
                 'Validator'

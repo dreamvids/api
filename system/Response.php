@@ -17,6 +17,7 @@ class Response
     public $code = 200;
     public $data = [];
     public $errors= [];
+    public $success = true;
 
     protected final function __construct(array $data = [], int $code = 200){
         $this->data = $data;
@@ -30,6 +31,10 @@ class Response
         }
 
         return self::$instance;
+    }
+
+    public function setSuccess(bool $success){
+        $this->success = $success;
     }
 
     public function setCode(int $code): Response{
