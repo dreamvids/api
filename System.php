@@ -52,7 +52,8 @@ class System {
                 'Request',
                 'HTTPError',
                 'Response',
-                'Validator'
+                'Validator',
+                'PasswordManager'
             ],
             'api_models' => [
                 'APIClient',

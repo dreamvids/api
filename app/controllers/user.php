@@ -32,7 +32,7 @@ class UserCtrl implements ControllerInterface {
         ], $_POST);
 
         if($validation->validate()){
-            User::insertIntoDb([$_POST['username'], password_hash($_POST['pass'], PASSWORD_BCRYPT), $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
+            User::insertIntoDb([$_POST['username'], PasswordManager::generateHash($_POST['pass']), $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
         }else{
             Response::get()->setErrors($validation->getErrors());
             Response::get()->setSuccess(false);
