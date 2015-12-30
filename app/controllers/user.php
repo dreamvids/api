@@ -34,12 +34,55 @@ class UserCtrl implements ControllerInterface {
         if($validation->validate()){
             User::insertIntoDb([$_POST['username'], PasswordManager::generateHash($_POST['pass']), $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
         }else{
-            Response::get()->setErrors($validation->getErrors());
+            Response::get()->addError('validation', $validation->getErrors());
             Response::get()->setSuccess(false);
 
             HTTPError::BadRequest();
         }
 
+    }
+
+    public static function login(){
+        $loggedUser = null;
+
+        $validation = new Validator([
+            Validator::RULE_ALL => [
+                Validator::PARAM_REQUIRED => true,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_REQUIRED => 'All fields must be filled'
+                ]
+            ],
+            'username' => [
+                Validator::PARAM_CUSTOM => function($value){ return User::usernameExists($value);},
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => "This user does not exists"
+                ]
+            ],
+            'pass' => [
+                Validator::PARAM_CUSTOM => function($value, $data) use (&$loggedUser){
+                    if(User::usernameExists($data['username'])){
+                        $user = User::getBy('username', $data['username']);
+                        $result = PasswordManager::checkPass($value, $user->password);
+                        if($result){
+                            $loggedUser = $user;
+                        }
+                        return $result;
+                    }
+                    return false;
+                },
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => "Password doesn't match"
+                ]
+            ],
+        ], $_POST);
+
+        if($validation->validate()){
+            Response::get()->setSuccess(true);
+            Response::get()->addData('user', $loggedUser);
+        }else{
+            Response::get()->addError('validation', $validation->getErrors());
+            Response::get()->setSuccess(false);
+        }
     }
 
     public static function fetch() {

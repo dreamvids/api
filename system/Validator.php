@@ -92,7 +92,7 @@ class Validator{
                 return preg_match($rule[$paramName], $this->data[$name]);
                 break;
             case self::PARAM_CUSTOM: //Callback
-                return $rule[$paramName]($this->data[$name]);
+                return $rule[$paramName]($this->data[$name], $this->data);
                 break;
             case self::PARAM_TYPE: //Predefined verifications such as email
                 return $this->handlePredefinedRule($rule[$paramName], $this->data[$name]);
