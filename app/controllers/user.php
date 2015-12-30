@@ -2,31 +2,31 @@
 class UserCtrl implements ControllerInterface {
     public static function create() {
         $validation = new Validator([
-            '_all' => [
-                'required' => true,
-                '_messages' => [
-                    'required' => 'All fields must be filled'
+            Validator::RULE_ALL => [
+                Validator::PARAM_REQUIRED => true,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_REQUIRED  => 'All fields must be filled'
                 ]
             ],
             'username' => [
-                'custom' => function($value){ return !User::usernameExists($value); },
-                '_messages' => [
-                    'custom' => 'Username already taken'
+                Validator::PARAM_CUSTOM => function($value){ return !User::usernameExists($value); },
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => 'Username already taken'
                 ]
             ],
             'email' => [
-                'custom' => function($value){ return !User::emailExists($value); },
-                'type' => Validator::TYPE_EMAIL,
-                '_messages' => [
-                    'custom' => 'E-mail address already registered',
-                    'type' => 'Invalid E-Mail address'
+                Validator::PARAM_CUSTOM => function($value){ return !User::emailExists($value); },
+                Validator::PARAM_TYPE => Validator::TYPE_EMAIL,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => 'E-mail address already registered',
+                    Validator::PARAM_TYPE => 'Invalid E-Mail address'
                 ]
             ],
             'pass' => [],
             'pass_confirm' => [
-                'same' => 'pass',
-                '_messages' => [
-                    'same' => 'Passwords must match'
+                Validator::PARAM_SAME => 'pass',
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_SAME => 'Passwords must match'
                 ]
             ]
         ], $_POST);

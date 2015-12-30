@@ -6,20 +6,31 @@ class Validator{
     protected $errors = [];
     protected $data = [];
 
-    static $default_rule = [
-        'required' => null,
-        'regex' => null,
-        'custom' => null,
-        'type' => null,
-        'same' => null,
-        '_messages' => []
-    ];
+    const PARAM_REQUIRED = "required";
+    const PARAM_REGEX = "regex";
+    const PARAM_CUSTOM = "custom";
+    const PARAM_TYPE = "type";
+    const PARAM_SAME = "same";
+    const PARAM_MESSAGES = "_messages";
+
+    const RULE_ALL = "_all";
 
     const TYPE_EMAIL = "email";
+
+    static $default_rule = [
+        self::PARAM_REQUIRED => null,
+        self::PARAM_REGEX => null,
+        self::PARAM_CUSTOM => null,
+        self::PARAM_TYPE => null,
+        self::PARAM_SAME => null,
+        self::PARAM_MESSAGES => []
+    ];
+
 
     public function __construct(array $rules, array $data){
         $this->rules = $rules;
         $this->data = $data;
+
         $this->fillEmptyParams();
     }
 
@@ -29,7 +40,7 @@ class Validator{
      */
     public function validate(): bool{
         foreach($this->rules as $name => $rule){
-            if($name == '_all'){
+            if($name == self::RULE_ALL){
                 continue;
             }
             foreach(self::$default_rule as $paramName => $defaultValue){
@@ -62,28 +73,32 @@ class Validator{
     protected function checkRuleParam(string $name, string $paramName): bool{
         $rule = $this->rules[$name];
         if($rule[$paramName] === null){ //If this rule's param is not changed, then it's automatically valid
-            if(isset($this->rules['_all'][$paramName])){
-                $rule = $this->rules['_all'];
+            if(isset($this->rules[self::RULE_ALL][$paramName])){
+                $rule = $this->rules[self::RULE_ALL];
             }else{
                 return true;
             }
         }
 
+        if(!isset($this->data[$name]) && $paramName != self::PARAM_REQUIRED){ // Avoid undefined indexes
+            return false;
+        }
+
         switch($paramName){
-            case 'required':
-                return !$rule['required'] || (isset($this->data[$name]) && $this->data[$name] != '');
+            case self::PARAM_REQUIRED:
+                return !$rule[$paramName] || (isset($this->data[$name]) && $this->data[$name] != '');
                 break;
-            case 'regex':
-                return preg_match($rule['required'], $this->data[$name]);
+            case self::PARAM_REGEX:
+                return preg_match($rule[$paramName], $this->data[$name]);
                 break;
-            case 'custom': //Callback
-                return $rule['custom']($this->data[$name]);
+            case self::PARAM_CUSTOM: //Callback
+                return $rule[$paramName]($this->data[$name]);
                 break;
-            case 'type': //Predefined verifications such as email
-                return $this->handlePredefinedRule($rule['type'], $this->data[$name]);
+            case self::PARAM_TYPE: //Predefined verifications such as email
+                return $this->handlePredefinedRule($rule[$paramName], $this->data[$name]);
                 break;
-            case 'same':
-                return isset($this->data[$rule['same']]) && ($this->data[$rule['same']] == $this->data[$name]);
+            case self::PARAM_SAME:
+                return isset($this->data[$rule[$paramName]]) && ($this->data[$rule[$paramName]] == $this->data[$name]);
                 //Return true if this field has the same value as the given one
                 break;
         }
@@ -111,7 +126,7 @@ class Validator{
     }
 
     protected function getMessage(string $name, string $param): string{
-        return $this->rules[$name]['_messages'][$param] ?? $this->rules['_all']['_messages'][$param] ?? '';
+        return $this->rules[$name][self::PARAM_MESSAGES][$param] ?? $this->rules[self::RULE_ALL][self::PARAM_MESSAGES][$param] ?? '';
     }
 
 
