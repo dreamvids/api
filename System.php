@@ -51,7 +51,8 @@ class System {
                 'Utils',
                 'Request',
                 'Data',
-                'HTTPError'
+                'HTTPError',
+                'Response'
             ],
             'api_models' => [
                 'APIClient',

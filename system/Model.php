@@ -39,7 +39,12 @@ abstract class Model {
 		$data = $req->fetch();
 		$req->closeCursor();
 		$classname = get_called_class();
-		return new $classname($data['id']);
+
+		if($data === false){
+			return null;
+		}else{
+			return new $classname($data['id']);
+		}
 	}
 
 	protected function requestDb(int $id): array {
