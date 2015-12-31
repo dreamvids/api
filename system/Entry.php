@@ -11,15 +11,23 @@ abstract class Entry extends Model {
 				$this->fields[] = $key;
    			}
    		}
+
 	}
 
 	public function save() {
 	    if (isset($this->id)) {
 	    	$attr = $this->fields;
-    		unset($attr['id']);
-    		$cols = array_keys($attr);
-    		$args = array_values($attr);
-    		$this->saveToDb($this->id, $cols, $args);
+			$args = [];
+			foreach($attr as $k => $field){
+				if($field == 'id'){
+    				unset($attr[$k]);
+					continue;
+				}
+				$args[$field] = $this->$field;
+			}
+
+			$args = array_values($args);
+    		$this->saveToDb($this->id, $attr, $args);
 	    }
 	}
 
