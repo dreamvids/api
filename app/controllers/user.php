@@ -1,37 +1,87 @@
 <?php
 class UserCtrl implements ControllerInterface {
     public static function create() {
-        if (isset($_POST['username'], $_POST['email'], $_POST['pass'], $_POST['pass_confirm'])) {
-            if (!User::usernameExists($_POST['username'])) {
-                if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-                    if (!User::emailExists($_POST['email'])) {
-                        if ($_POST['pass'] == $_POST['pass_confirm']) {
-                            User::insertIntoDb([$_POST['username'], $_POST['pass'], $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
-                            Data::get()->add('success', true);
-                        }
-                        else {
-                            $err = 'Passwords must match';
-                        }
-                    }
-                    else {
-                        $err = 'E-Mail address already registered';
-                    }
-                }
-                else {
-                    $err = 'Invalid E-Mail address';
-                }
-            }
-            else {
-                $err = 'Username already taken';
-            }
-        }
-        else {
-            $err = 'All fields must be filled';
+        $validation = new Validator([
+            Validator::RULE_ALL => [
+                Validator::PARAM_REQUIRED => true,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_REQUIRED  => 'All fields must be filled'
+                ]
+            ],
+            'username' => [
+                Validator::PARAM_CUSTOM => function($value){ return !User::usernameExists($value); },
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => 'Username already taken'
+                ]
+            ],
+            'email' => [
+                Validator::PARAM_CUSTOM => function($value){ return !User::emailExists($value); },
+                Validator::PARAM_TYPE => Validator::TYPE_EMAIL,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => 'E-mail address already registered',
+                    Validator::PARAM_TYPE => 'Invalid E-Mail address'
+                ]
+            ],
+            'pass' => [],
+            'pass_confirm' => [
+                Validator::PARAM_SAME => 'pass',
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_SAME => 'Passwords must match'
+                ]
+            ]
+        ], $_POST);
+
+        if($validation->validate()){
+            User::insertIntoDb([$_POST['username'], PasswordManager::generateHash($_POST['pass']), $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);
+        }else{
+            Response::get()->addError('validation', $validation->getErrors());
+            Response::get()->setSuccess(false);
+
+            HTTPError::BadRequest();
         }
 
-        if (isset($err)) {
-            Data::get()->add('success', false);
-            Data::get()->add('error', $err);
+    }
+
+    public static function login(){
+        $loggedUser = null;
+
+        $validation = new Validator([
+            Validator::RULE_ALL => [
+                Validator::PARAM_REQUIRED => true,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_REQUIRED => 'All fields must be filled'
+                ]
+            ],
+            'username' => [
+                Validator::PARAM_CUSTOM => function($value){ return User::usernameExists($value);},
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => "This user does not exists"
+                ]
+            ],
+            'pass' => [
+                Validator::PARAM_CUSTOM => function($value, $data) use (&$loggedUser){
+                    if(User::usernameExists($data['username'])){
+                        $user = User::getBy('username', $data['username']);
+                        $result = PasswordManager::checkPass($value, $user->password);
+                        if($result){
+                            $loggedUser = $user;
+                        }
+                        return $result;
+                    }
+                    return false;
+                },
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_CUSTOM => "Password doesn't match"
+                ]
+            ],
+        ], $_POST);
+
+        if($validation->validate()){
+            Response::get()->setSuccess(true);
+            Response::get()->addData('user', $loggedUser);
+        }else{
+            Response::get()->addError('validation', $validation->getErrors());
+            Response::get()->setSuccess(false);
         }
     }
 
@@ -40,11 +90,16 @@ class UserCtrl implements ControllerInterface {
     }
 
     public static function exists() {
-        // TODO: Implement exists() method.
+
     }
 
     public static function read() {
-        // TODO: Implement read() method.
+        if(User::exists('id', Request::get()->getArg(1))){
+            $user = User::getBy('id', Request::get()->getArg(1));
+            Response::get()->addData('user', $user);
+        }else{
+            HTTPError::NotFound();
+        }
     }
 
     public static function update() {

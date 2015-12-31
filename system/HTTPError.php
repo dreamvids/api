@@ -1,22 +1,27 @@
 <?php
 class HTTPError {
+
+    public static function BadRequest() {
+        return Response::get()->setCode(400);
+    }
+
     public static function AuthorizationRequired() {
-        return new Response([], 401);
+        return Response::get()->setCode(401);
     }
 
     public static function Forbidden() {
-        return new Response([], 403);
+        return Response::get()->setCode(403);
     }
 
     public static function NotFound() {
-        return new Response([], 404);
+        return Response::get()->setCode(404);
     }
 
     public static function MethodNotAllowed() {
-        return new Response([], 405);
+        return Response::get()->setCode(405);
     }
 
     public static function InternalServerError() {
-        return new Response([], 500);
+        return Response::get()->setCode(500);
     }
 }

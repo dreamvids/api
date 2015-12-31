@@ -50,9 +50,12 @@ class System {
                 'Entry',
                 'Utils',
                 'Request',
-                'Data',
                 'HTTPError',
-                'Response'
+                'Response',
+                'Validator',
+                'PasswordManager',
+                'Dispatcher',
+                'ControllerInterface'
             ],
             'api_models' => [
                 'APIClient',
