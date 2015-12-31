@@ -2,6 +2,30 @@
 abstract class Model {
 	static $table_name = '';
 
+	/**
+	 * A user belongs to a rank
+	 * @var array
+	 */
+	const BELONGS_TO = "belongs_to";
+
+	/**
+	 * A user has one channel (Main channel)
+	 * @var array
+	 */
+	const HAS_ONE = "has_one";
+
+	/**
+	 * A channel has many videos
+	 * @var array
+	 */
+	const HAS_MANY = "has_many";
+
+	/**
+	 * A channel belongs multiple users (admin) and a user has multiple channels
+	 * @var array
+	 */
+	const BELONGS_TO_MANY = "belongs_to_many";
+
 	public static function fetchAll(): array {
 		$model = get_called_class();
 		$req = DB::get()->query("SELECT id FROM ".static::$table_name);
@@ -71,4 +95,21 @@ abstract class Model {
 		$req = DB::get()->prepare("DELETE FROM ".static::$table_name." WHERE id = ?");
 		$req->execute([$id]);
 	}
+
+	/**
+	 * @param string $targetClassName The name of the associated class
+	 * @param string $associationType The type of the link
+	 * @param array $options Options
+	 * @return Model|null
+	 */
+	public function getAssociated(string $targetClassName, string $associationType, $options = []){
+		switch($associationType){
+			case self::BELONGS_TO:
+				$field_name = str_replace(["dv_", 'api_'], '', $targetClassName::$table_name).'_id';
+				return $targetClassName::getBy('id', $this->$field_name);
+			break;
+		}
+		return null;
+	}
+
 }

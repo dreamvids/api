@@ -1,17 +1,21 @@
 <?php
-abstract class Entry extends Model {	
+abstract class Entry extends Model {
+
+	protected $fields = [];
+
 	public function __construct(int $id) {
    		$data = $this->requestDb($id);
    		foreach ($data as $key => $value) {
    			if (!is_numeric($key) ) {
    				$this->$key = $value;
+				$this->fields[] = $key;
    			}
    		}
 	}
 
 	public function save() {
 	    if (isset($this->id)) {
-	    	$attr = get_object_vars($this);
+	    	$attr = $this->fields;
     		unset($attr['id']);
     		$cols = array_keys($attr);
     		$args = array_values($attr);

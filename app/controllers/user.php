@@ -90,11 +90,16 @@ class UserCtrl implements ControllerInterface {
     }
 
     public static function exists() {
-        // TODO: Implement exists() method.
+
     }
 
     public static function read() {
-        // TODO: Implement read() method.
+        if(User::exists('id', Request::get()->getArg(1))){
+            $user = User::getBy('id', Request::get()->getArg(1));
+            Response::get()->addData('user', $user);
+        }else{
+            HTTPError::NotFound();
+        }
     }
 
     public static function update() {
