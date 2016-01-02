@@ -41,6 +41,7 @@ class Dispatcher
 
         if(is_null($controller)){
             HTTPError::NotFound()->render();
+            return null;
         }else{
             return $controller;
         }
@@ -51,6 +52,7 @@ class Dispatcher
         $classname = ucfirst($controller->uri)."Ctrl";
         if (!file_exists($filename) ) {
             HTTPError::NotFound()->render();
+            return "";
         }else{
             require_once $filename;
             return $classname;
@@ -68,6 +70,7 @@ class Dispatcher
 
         if ($method == '') {
             HTTPError::MethodNotAllowed()->render();
+            return "";
         } else {
             return $method;
         }
