@@ -80,9 +80,11 @@ class Response
         echo json_encode($this, JSON_PRETTY_PRINT);
     }
 
-    public function render(){
+    public function render($exit = true){
         $this->renderHeaders();
         $this->renderBody();
-        exit();
+        if($exit){
+            exit();
+        }
     }
 }
