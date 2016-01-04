@@ -50,7 +50,7 @@ class Dispatcher
     protected function loadController(APIController $controller): string{
         $filename = System::get()->getControllers().$controller->uri.'.php';
         $classname = ucfirst($controller->uri)."Ctrl";
-        if (!file_exists($filename) ) {
+        if (!file_exists($filename)) {
             HTTPError::NotFound()->render();
             return "";
         }else{
@@ -77,8 +77,10 @@ class Dispatcher
     }
 
     protected function tryDispatch(APIController $controller, string $classname, string $method){
-        if (APIPermission::isPermit($controller, $method)) {
-            $classname::$method();
+        if(!class_exists($classname) || !method_exists($classname, $method)){
+            HTTPError::NotFound()->render();
+        }elseif (APIPermission::isPermit($controller, $method)) {
+                $classname::$method();
         }
         else {
             HTTPError::Forbidden()->render();
