@@ -1,10 +1,6 @@
 <?php
-class APIPermission extends Entry implements ModelInterface {
+class APIPermission extends Entry{
     static $table_name = 'api_permission';
-
-    public function __construct(int $id) {
-        parent::__construct($id);
-    }
 
     public static function isPermit(APIController $ctrl, string $method): bool {
         $req = DB::get()->prepare("SELECT COUNT(*) AS nb FROM ".static::$table_name." WHERE controller_id = ? AND `action` = ? AND rank_id = ?");

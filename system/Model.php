@@ -26,12 +26,14 @@ abstract class Model {
 	 */
 	const BELONGS_TO_MANY = "belongs_to_many";
 
-	public static function fetchAll(): array {
+	static $associations = [];
+
+	public static function fetchAll(array $options = []): array {
 		$model = get_called_class();
-		$req = DB::get()->query("SELECT id FROM ".static::$table_name);
+		$req = DB::get()->query("SELECT * FROM ".static::$table_name);
 		$tab = [];
 		while ($rep = $req->fetch()) {
-			$tab[] = new $model($rep['id']);
+			$tab[] = new $model($rep['id'], $rep, $options);
 		}
 		$req->closeCursor();
 		
@@ -57,8 +59,14 @@ abstract class Model {
 		return ($data['nb'] > 0);
 	}
 
-	public static function getBy(string $col, $value) {
-		$req = DB::get()->prepare("SELECT id FROM ".static::$table_name." WHERE ".$col." = ? LIMIT 1");
+	/**
+	 * @param string $col
+	 * @param $value
+	 * @param array $options
+	 * @return Model|null
+	 */
+	public static function getBy(string $col, $value, array $options = []) {
+		$req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE ".$col." = ? LIMIT 1");
 		$req->execute([$value]);
 		$data = $req->fetch();
 		$req->closeCursor();
@@ -67,8 +75,20 @@ abstract class Model {
 		if($data === false){
 			return null;
 		}else{
-			return new $classname($data['id']);
+			return new $classname($data['id'], $data, $options);
 		}
+	}
+
+	public static function getAllBy(string $col, $value, array $options = []){
+		$req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE ".$col." = ?");
+		$req->execute([$value]);
+		$return = [];
+		$classname = get_called_class();
+		foreach($req->fetchAll() as $row){
+			$return[] = new $classname($row['id'], $row, $options);
+		}
+
+		return $return;
 	}
 
 	protected function requestDb(int $id): array {
@@ -102,14 +122,39 @@ abstract class Model {
 	 * @param array $options Options
 	 * @return Model|null
 	 */
-	public function getAssociated(string $targetClassName, string $associationType, $options = []){
+	public function getAssociated(string $targetClassName, string $associationType, array $options = []){
+
 		switch($associationType){
 			case self::BELONGS_TO:
-				$field_name = str_replace(["dv_", 'api_'], '', $targetClassName::$table_name).'_id';
-				return $targetClassName::getBy('id', $this->$field_name);
+				$field_name = $options['field_name'] ?? str_replace(["dv_", 'api_'], '', $targetClassName::$table_name).'_id';
+				return $targetClassName::getBy('id', $this->$field_name, $options);
+			break;
+			case self::HAS_MANY:
+				$field_name = str_replace(["dv_", 'api_'], '', static::$table_name).'_id';
+				$return = $targetClassName::getAllBy($field_name, $this->id, $options);
+				return $return;
 			break;
 		}
 		return null;
 	}
 
+	protected function autoLoadAssociations($options = []){
+		foreach(static::$associations as $name => $association){
+			$autoload = $association['autoload'] ?? false;
+			if($autoload){
+				$this->loadAssociation($name);
+			}
+		}
+	}
+
+	/**
+	 * @return $this
+	 */
+	public function loadAssociation(string $name){
+		if(isset(static::$associations[$name])){
+			$association = static::$associations[$name];
+			$this->$name = $this->getAssociated($association['class_name'], $association['type'], $association);
+		}
+		return $this;
+	}
 }

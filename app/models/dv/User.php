@@ -1,5 +1,6 @@
 <?php
-class User extends Entry implements ModelInterface {
+class User extends Entry {
+
     static $table_name = 'dv_user';
 
     /**
@@ -7,10 +8,17 @@ class User extends Entry implements ModelInterface {
      */
     public $rank;
 
-    public function __construct(int $id) {
-        parent::__construct($id);
-        $this->rank = $this->getAssociated('Rank', self::BELONGS_TO);
-    }
+    static $associations = [
+        'rank' => [
+            'type' => self::BELONGS_TO,
+            'class_name' => 'Rank',
+            'autoload' => true
+        ],
+        'channels' => [
+            'type' => self::HAS_MANY,
+            'class_name' => 'Channel'
+        ]
+    ];
 
     public static function usernameExists(string $username): bool {
         return self::exists("username", $username);

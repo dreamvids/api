@@ -9,7 +9,7 @@ class Response
         400 => "Bad Request",
         401 => "Unauthorized",
         403 => "Forbidden",
-        404=> "Not Found",
+        404 => "Not Found",
         405 => "Method not allowed",
         500 => "Internal Server Error"
     ];
@@ -22,7 +22,6 @@ class Response
     protected final function __construct(array $data = [], int $code = 200){
         $this->data = $data;
         $this->code = $code;
-
     }
 
     public static function get(): Response {
@@ -71,7 +70,7 @@ class Response
     }
 
     protected function renderHeaders(){
-        header('Content-type: application/json');
+        header('Content-type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
         header('HTTP/1.1 ' . $this->code . " " . self::$codes[$this->code]);
     }

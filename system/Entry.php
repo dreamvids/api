@@ -3,8 +3,8 @@ abstract class Entry extends Model {
 
 	protected $fields = [];
 
-	public function __construct(int $id) {
-   		$data = $this->requestDb($id);
+	public function __construct(int $id, $data = [], array $options = []) {
+   		$data = empty($data) ? $this->requestDb($id) : $data;
    		foreach ($data as $key => $value) {
    			if (!is_numeric($key) ) {
    				$this->$key = $value;
@@ -12,6 +12,7 @@ abstract class Entry extends Model {
    			}
    		}
 
+		$this->autoLoadAssociations($options);
 	}
 
 	public function save() {

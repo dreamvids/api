@@ -45,7 +45,6 @@ class System {
         $this->dependencies = [
             'system' => [
                 'Database',
-                'ModelInterface',
                 'Model',
                 'Entry',
                 'Utils',
@@ -66,7 +65,9 @@ class System {
             ],
             'dv_models' => [
                 'Rank',
-                'User'
+                'User',
+                'Channel',
+                'Video'
             ],
             'traits' => [
                 'FlagTrait',

@@ -52,7 +52,7 @@ class UserCtrl implements ControllerInterface {
 
     public static function read() {
         if(User::exists('id', Request::get()->getArg(1))){
-            $user = User::getBy('id', Request::get()->getArg(1));
+            $user = User::getBy('id', Request::get()->getArg(1))->loadAssociation('channels');
             Response::get()->addData('user', $user);
         }else{
             HTTPError::NotFound();
