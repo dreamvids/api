@@ -67,7 +67,8 @@ class System {
                 'Rank',
                 'User',
                 'Channel',
-                'Video'
+                'Video',
+                'Visibility'
             ],
             'traits' => [
                 'FlagTrait',
