@@ -102,6 +102,8 @@ class Validator{
                 //Return true if this field has the same value as the given one
                 break;
         }
+
+        return false;
     }
 
     /**
@@ -126,7 +128,7 @@ class Validator{
     }
 
     protected function getMessage(string $name, string $param): string{
-        return $this->rules[$name][self::PARAM_MESSAGES][$param] ?? $this->rules[self::RULE_ALL][self::PARAM_MESSAGES][$param] ?? '';
+        return $this->rules[$name][self::PARAM_MESSAGES][$param] ?? $this->rules[self::RULE_ALL][self::PARAM_MESSAGES][$param] ?? $param;
     }
 
 
