@@ -5,7 +5,7 @@ class HomeCtrl implements ControllerInterface {
     }
 
     public static function fetch() {
-        Data::get()->add('TITLE', 'Accueil');
+        Response::get()->addData('TITLE', 'Accueil');
     }
 
     public static function exists() {
