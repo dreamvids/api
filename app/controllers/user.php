@@ -52,8 +52,10 @@ class UserCtrl implements ControllerInterface {
 
     public static function read() {
         if(User::exists('id', Request::get()->getArg(1))){
-            $user = User::getBy('id', Request::get()->getArg(1))->loadAssociation('channels');
+            $user = User::getBy('id', Request::get()->getArg(1));
+            $user->loadAssociations(['administred_channels', 'owned_channels.admins', 'owned_channels.owner']);
             Response::get()->addData('user', $user);
+            //Response::get()->addData('videos', Video::getAllBy('id', [1,2])); //Test
         }else{
             HTTPError::NotFound();
         }

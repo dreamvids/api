@@ -13,8 +13,12 @@ class Video extends Entry {
         ],
         'visibility' => [
             'type' => self::BELONGS_TO,
-            'class_name' => 'Channel',
+            'class_name' => 'Visibility',
             'autoload' => true,
+        ],
+        'comments' => [
+            'type' => self::HAS_MANY,
+            'class_name' => 'Comment'
         ]
     ];
 

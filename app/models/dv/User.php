@@ -14,9 +14,19 @@ class User extends Entry {
             'class_name' => 'Rank',
             'autoload' => true
         ],
-        'channels' => [
+        'owned_channels' => [
             'type' => self::HAS_MANY,
             'class_name' => 'Channel'
+        ],
+        'comments' => [
+            'type' => self::HAS_MANY,
+            'class_name' => 'Comment'
+
+        ],
+        'administred_channels' => [
+            'type' => self::MANY_TO_MANY,
+            'class_name' => 'Channel',
+            'through' => 'ChannelAdmin'
         ]
     ];
 

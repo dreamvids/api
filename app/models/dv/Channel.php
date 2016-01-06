@@ -12,6 +12,11 @@ class Channel extends Entry {
             'type' => self::HAS_MANY,
             'class_name' => 'Video',
             'autoload' => false
+        ],
+        'admins' => [
+            'type' => self::MANY_TO_MANY,
+            'class_name' => 'User',
+            'through' => 'ChannelAdmin'
         ]
     ];
 

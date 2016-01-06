@@ -24,7 +24,7 @@ abstract class Model {
 	 * A channel belongs multiple users (admin) and a user has multiple channels
 	 * @var array
 	 */
-	const BELONGS_TO_MANY = "belongs_to_many";
+	const MANY_TO_MANY = "many_to_many";
 
 	static $associations = [];
 
@@ -66,8 +66,16 @@ abstract class Model {
 	 * @return Model|null
 	 */
 	public static function getBy(string $col, $value, array $options = []) {
-		$req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE ".$col." = ? LIMIT 1");
-		$req->execute([$value]);
+
+        if(is_array($value)){
+            $value_str = 'IN ' . self::generateValueListString(count($value));
+        }else{
+            $value_str = '= ?';
+            $value = [$value];
+        }
+
+		$req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE ".$col." $value_str LIMIT 1");
+		$req->execute($value);
 		$data = $req->fetch();
 		$req->closeCursor();
 		$classname = get_called_class();
@@ -80,8 +88,15 @@ abstract class Model {
 	}
 
 	public static function getAllBy(string $col, $value, array $options = []){
-		$req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE ".$col." = ?");
-		$req->execute([$value]);
+        if(is_array($value)){
+            $value_str = 'IN ' . self::generateValueListString(count($value));
+        }else{
+            $value_str = '= ?';
+            $value = [$value];
+        }
+
+        $req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE ".$col." $value_str");
+		$req->execute($value);
 		$return = [];
 		$classname = get_called_class();
 		foreach($req->fetchAll() as $row){
@@ -90,6 +105,12 @@ abstract class Model {
 
 		return $return;
 	}
+
+    protected static function generateValueListString($size): string{
+        $str = str_repeat('?,', $size);
+        $str = trim($str, ',');
+        return '(' . $str . ')';
+    }
 
 	protected function requestDb(int $id): array {
 		$req = DB::get()->prepare("SELECT * FROM ".static::$table_name." WHERE id = ?");
@@ -122,38 +143,98 @@ abstract class Model {
 	 * @param array $options Options
 	 * @return Model|null
 	 */
-	public function getAssociated(string $targetClassName, string $associationType, array $options = []){
-
+	protected function getAssociated(string $targetClassName, string $associationType, array $options = []){
+        $association_options = $options['association'] ?? [];
+        unset($options['association']);
+        $return = null;
+        if(isset($this->{$association_options['name']})){
+            $object = $this->{$association_options['name']};
+            if(is_array($object)){
+                foreach($object as $element){
+                    $element->autoLoadAssociations($options);
+                }
+            }else{
+                $object->autoLoadAssociations($options);
+            }
+            return $this->{$association_options['name']};
+        }
 		switch($associationType){
 			case self::BELONGS_TO:
-				$field_name = $options['field_name'] ?? str_replace(["dv_", 'api_'], '', $targetClassName::$table_name).'_id';
-				return $targetClassName::getBy('id', $this->$field_name, $options);
+				$field_name = $association_options['field_name'] ?? str_replace(["dv_", 'api_'], '', $targetClassName::$table_name).'_id';
+				$return = $targetClassName::getBy('id', $this->$field_name, $options);
 			break;
+            case self::MANY_TO_MANY:
+                $throughClassName = $association_options['through'];
+                $self_field_name = str_replace(["dv_", 'api_'], '', static::$table_name).'_id';
+                $foreign_field_name = str_replace(["dv_", 'api_'], '', $targetClassName::$table_name).'_id';
+                $ids = $throughClassName::getAllBy($self_field_name,$this->id, $options);
+                foreach($ids as $k => $id){
+                    $ids[$k] = $id->$foreign_field_name;
+                }
+                $return = $targetClassName::getAllBy('id', $ids, $options);
+                break;
+            case self::HAS_ONE:
+                $field_name = $association_options['field_name'] ?? str_replace(["dv_", 'api_'], '', self::$table_name).'_id';
+                $return = $targetClassName::getBy($field_name, $this->id, $options);
+            break;
 			case self::HAS_MANY:
-				$field_name = str_replace(["dv_", 'api_'], '', static::$table_name).'_id';
+				$field_name = $association_options['field_name'] ?? str_replace(["dv_", 'api_'], '', static::$table_name).'_id';
 				$return = $targetClassName::getAllBy($field_name, $this->id, $options);
-				return $return;
 			break;
 		}
-		return null;
+		return $return;
 	}
 
-	protected function autoLoadAssociations($options = []){
-		foreach(static::$associations as $name => $association){
-			$autoload = $association['autoload'] ?? false;
-			if($autoload){
-				$this->loadAssociation($name);
+	protected function autoLoadAssociations(array $options = []){
+		if(!empty($options)){
+			$options_array = $this->getNextAssociationToLoad($options);
+			$options = $options_array['options'];
+			$next = $options_array['next'];
+			$this->loadAssociation($next, $options);
+		}else{
+			foreach(static::$associations as $name => $association){
+				$autoload = $association['autoload'] ?? false;
+				if($autoload){
+					$this->loadAssociation($name);
+				}
 			}
 		}
 	}
 
-	/**
-	 * @return $this
-	 */
-	public function loadAssociation(string $name){
+	protected function getNextAssociationToLoad(array $list): array{
+		$next = '';
+		foreach($list as $k => $value){
+			if(empty($value)){
+                unset($list[$k]);
+				continue;
+			}else{
+				$to_load = explode('.', $value);
+				$next = array_shift($to_load);
+				$list[$k] = implode('.', $to_load);
+				break;
+			}
+		}
+		return [
+			'next' => $next,
+			'options' => $list
+		];
+	}
+
+
+	public function loadAssociation($name, array $options = []){
 		if(isset(static::$associations[$name])){
 			$association = static::$associations[$name];
-			$this->$name = $this->getAssociated($association['class_name'], $association['type'], $association);
+            $options['association'] = $association;
+            $options['association']['name'] = $name;
+			$this->$name = $this->getAssociated($association['class_name'], $association['type'], $options);
+		}
+		return $this;
+	}
+
+	public function loadAssociations(array $options = []){
+		foreach($options as $option){
+			$options_array = $this->getNextAssociationToLoad([$option]);
+			$this->loadAssociation($options_array['next'], $options_array['options']);
 		}
 		return $this;
 	}

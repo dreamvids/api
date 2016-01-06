@@ -68,7 +68,9 @@ class System {
                 'User',
                 'Channel',
                 'Video',
-                'Visibility'
+                'Visibility',
+                'Comment',
+                'ChannelAdmin'
             ],
             'traits' => [
                 'FlagTrait',
