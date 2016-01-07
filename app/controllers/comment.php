@@ -2,7 +2,6 @@
 class CommentCtrl implements ControllerInterface {
 
     use ExistsTrait;
-    public static $mainModelName = "Video";
 
     public static function create() {}
 
