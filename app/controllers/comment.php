@@ -1,7 +1,8 @@
 <?php
-class ChannelCtrl implements ControllerInterface {
+class CommentCtrl implements ControllerInterface {
 
     use ExistsTrait;
+    public static $mainModelName = "Video";
 
     public static function create() {}
 
@@ -10,13 +11,7 @@ class ChannelCtrl implements ControllerInterface {
     }
 
     public static function read() {
-        if(Channel::exists('id', Request::get()->getArg(1))){
-            $channel = Channel::getBy('id', Request::get()->getArg(1));
-            Response::get()->addData('channel', $channel);
-        }else{
-            HTTPError::NotFound();
-            Response::get()->addError('status', Response::$codes[404]);
-        }
+
     }
 
     public static function update() {

@@ -74,7 +74,8 @@ class System {
             ],
             'traits' => [
                 'FlagTrait',
-                'FlushTrait'
+                'FlushTrait',
+                'ExistsTrait'
             ]
         ];
 

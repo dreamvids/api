@@ -12,6 +12,12 @@ class Comment extends Entry {
         'video' => [
             'type' => self::BELONGS_TO,
             'class_name' => 'Video'
+        ],
+        'replies' => [
+            'type' => self::HAS_MANY,
+            'class_name' => 'Comment',
+            'field_name' => 'parent_id',
+            'autoload' => true
         ]
     ];
 

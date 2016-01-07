@@ -1,5 +1,8 @@
 <?php
 class UserCtrl implements ControllerInterface {
+
+    use ExistsTrait;
+
     public static function create() {
         $validation = new Validator([
             Validator::RULE_ALL => [
@@ -44,10 +47,6 @@ class UserCtrl implements ControllerInterface {
 
     public static function fetch() {
         // TODO: Implement fetch() method.
-    }
-
-    public static function exists() {
-
     }
 
     public static function read() {
