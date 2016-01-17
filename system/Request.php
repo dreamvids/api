@@ -40,6 +40,7 @@ class Request {
 			}
 			else {
 				$methods = [
+					'HEAD' => 'exists',
 					'GET' => 'read',
 					'PUT' => 'update',
 					'DELETE' => 'delete'
