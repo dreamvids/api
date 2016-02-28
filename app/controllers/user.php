@@ -49,6 +49,10 @@ class UserCtrl implements ControllerInterface {
         // TODO: Implement fetch() method.
     }
 
+    public static function exists() {
+        // TODO: Implement exists() method.
+    }
+
     public static function read() {
         if(User::exists('id', Request::get()->getArg(1))){
             $user = User::getBy('id', Request::get()->getArg(1));

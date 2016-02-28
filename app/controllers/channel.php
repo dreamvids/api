@@ -3,7 +3,9 @@ class ChannelCtrl implements ControllerInterface {
 
     use ExistsTrait;
 
-    public static function create() {}
+    public static function create() {
+        // TODO: Implement create() method.
+    }
 
     public static function fetch() {
         // TODO: Implement fetch() method.
