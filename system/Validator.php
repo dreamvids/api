@@ -11,7 +11,8 @@ class Validator{
     const PARAM_CUSTOM = "custom";
     const PARAM_TYPE = "type";
     const PARAM_SAME = "same";
-    const PARAM_LENGTH = "length";
+    const PARAM_MIN_LENGTH = "min_length";
+    const PARAM_MAX_LENGTH = "max_length";
     const PARAM_MESSAGES = "_messages";
 
     const RULE_ALL = "_all";
