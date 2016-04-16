@@ -11,6 +11,7 @@ class Validator{
     const PARAM_CUSTOM = "custom";
     const PARAM_TYPE = "type";
     const PARAM_SAME = "same";
+    const PARAM_LENGTH = "length";
     const PARAM_MESSAGES = "_messages";
 
     const RULE_ALL = "_all";
@@ -23,6 +24,8 @@ class Validator{
         self::PARAM_CUSTOM => null,
         self::PARAM_TYPE => null,
         self::PARAM_SAME => null,
+        self::PARAM_MIN_LENGTH => 0,
+        self::PARAM_MAX_LENGTH => -1, //-1 means no limit
         self::PARAM_MESSAGES => []
     ];
 
@@ -100,6 +103,12 @@ class Validator{
             case self::PARAM_SAME:
                 return isset($this->data[$rule[$paramName]]) && ($this->data[$rule[$paramName]] == $this->data[$name]);
                 //Return true if this field has the same value as the given one
+                break;
+            case self::PARAM_MIN_LENGTH:
+                return strlen($this->data[$name])>=$rule[$paramName];
+                break;
+            case self::PARAM_MAX_LENGTH:
+                return $rule[$paramName] == -1 || strlen($this->data[$name])<=$rule[$paramName];
                 break;
         }
 
