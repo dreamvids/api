@@ -11,4 +11,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql \
 	&& docker-php-ext-enable pdo_mysql
 
+RUN a2enmod rewrite
+
 EXPOSE 80
