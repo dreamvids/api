@@ -2,10 +2,10 @@
 abstract class DB {
 	private static
 	$instance = null,
-	$db_host = 'localhost',
+	$db_host = 'db',
 	$db_name = 'dreamvids',
 	$db_user = 'root',
-	$db_pass = '';
+	$db_pass = 'root';
 	
 	public static function get(): PDO {
 		if (self::$instance == null) {
