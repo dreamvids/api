@@ -35,7 +35,11 @@ class SessionCtrl implements ControllerInterface {
         ], $_POST);
 
         if($validation->validate()){
+            $sessid = md5(uniqid());
+            $expire = Utils::time() + 365 * 86400;
+            Session::insertIntoDb([$sessid, $expire, $loggedUser->id]);
             Response::get()->setSuccess(true);
+            Response::get()->addData('sessid', $sessid);
             Response::get()->addData('user', $loggedUser);
         }else{
             Response::get()->addError('validation', $validation->getErrors());
@@ -60,6 +64,13 @@ class SessionCtrl implements ControllerInterface {
     }
 
     public static function delete() {
-        // TODO: Implement delete() method.
+        if (Session::exists('session_id', Request::get()->getArg(1))) {
+            $sess = Session::getBy('session_id', Request::get()->getArg(1))->delete();
+            Response::get()->setSuccess(true);
+        }
+        else {
+            Response::get()->setSuccess(false);
+            Response::get()->addError('notfound', 'Session ID doesn\'t exists');
+        }
     }
 }
