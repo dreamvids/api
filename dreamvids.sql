@@ -294,10 +294,15 @@ CREATE TABLE `dv_post` (
 DROP TABLE IF EXISTS `dv_rank`;
 CREATE TABLE `dv_rank` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` int(11) NOT NULL,
+  `name` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+INSERT INTO `dv_rank` (`id`, `name`) VALUES
+(1,	'member'),
+(2,	'verified'),
+(3,	'moderator'),
+(4,	'admin');
 
 DROP TABLE IF EXISTS `dv_session`;
 CREATE TABLE `dv_session` (
@@ -379,6 +384,9 @@ CREATE TABLE `dv_visibility` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+INSERT INTO `dv_visibility` (`id`, `name`) VALUES
+(1,	'public'),
+(2,	'not_indexed');
 
 DROP TABLE IF EXISTS `dv_vote`;
 CREATE TABLE `dv_vote` (
@@ -391,4 +399,4 @@ CREATE TABLE `dv_vote` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
--- 2016-04-19 19:36:49
+-- 2016-04-20 15:21:04
