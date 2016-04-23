@@ -237,7 +237,8 @@ CREATE TABLE `dv_conversion_status` (
 INSERT INTO `dv_conversion_status` (`id`, `name`) VALUES
 (1,	'error'),
 (2,	'converting'),
-(3,	'available');
+(3,	'moving'),
+(4,	'available');
 
 DROP TABLE IF EXISTS `dv_message`;
 CREATE TABLE `dv_message` (
@@ -314,6 +315,16 @@ CREATE TABLE `dv_session` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `dv_session_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `dv_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+DROP TABLE IF EXISTS `dv_storage`;
+CREATE TABLE `dv_storage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `server` varchar(255) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 DROP TABLE IF EXISTS `dv_tag`;
@@ -399,4 +410,4 @@ CREATE TABLE `dv_vote` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
--- 2016-04-20 15:21:04
+-- 2016-04-23 11:01:19
