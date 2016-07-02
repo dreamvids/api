@@ -14,10 +14,13 @@ class Validator{
     const PARAM_MIN_LENGTH = "min_length";
     const PARAM_MAX_LENGTH = "max_length";
     const PARAM_MESSAGES = "_messages";
+    const PARAM_FILE_EXTENSION = "file_extension";
+    const PARAM_FILE_SIZE = "file_size";
 
     const RULE_ALL = "_all";
 
     const TYPE_EMAIL = "email";
+    const TYPE_FILE = "file";
 
     static $default_rule = [
         self::PARAM_REQUIRED => null,
@@ -27,13 +30,15 @@ class Validator{
         self::PARAM_SAME => null,
         self::PARAM_MIN_LENGTH => 0,
         self::PARAM_MAX_LENGTH => -1, //-1 means no limit
+        self::PARAM_FILE_EXTENSION => [],
+        self::PARAM_FILE_SIZE => -1, //No limit (except limit set in php.ini) (in bytes)
         self::PARAM_MESSAGES => []
     ];
 
 
-    public function __construct(array $rules, array $data){
+    public function __construct(array $rules, array $data = null){
         $this->rules = $rules;
-        $this->data = $data;
+        $this->data = $data ?? $_POST+$_FILES;
 
         $this->fillEmptyParams();
     }
@@ -76,7 +81,7 @@ class Validator{
      */
     protected function checkRuleParam(string $name, string $paramName): bool{
         $rule = $this->rules[$name];
-        if($rule[$paramName] === null){ //If this rule's param is not changed, then it's automatically valid
+        if($rule[$paramName] === self::$default_rule[$paramName]){ //If this rule's param is not changed, then it's automatically valid
             if(isset($this->rules[self::RULE_ALL][$paramName])){
                 $rule = $this->rules[self::RULE_ALL];
             }else{
@@ -84,8 +89,8 @@ class Validator{
             }
         }
 
-        if(!isset($this->data[$name]) && $paramName != self::PARAM_REQUIRED){ // Avoid undefined indexes
-            return false;
+        if(!isset($this->data[$name])){
+            return !$rule[self::PARAM_REQUIRED];
         }
 
         switch($paramName){
@@ -110,6 +115,15 @@ class Validator{
                 break;
             case self::PARAM_MAX_LENGTH:
                 return $rule[$paramName] == -1 || strlen($this->data[$name])<=$rule[$paramName];
+                break;
+            case self::PARAM_FILE_SIZE:
+                return $rule[$paramName] == -1 || $this->data[$name]['size'] <= $rule[$paramName];
+                break;
+            case self::PARAM_FILE_EXTENSION:
+                $allowed = is_array($rule[$paramName]) ? $rule[$paramName] : [$rule[$paramName]]; //Array of extensions
+                $extension = strtolower(pathinfo($this->data[$name]['name'], PATHINFO_EXTENSION));
+                $this->data[$name]['extension'] = $extension;
+                return in_array($extension, $allowed);
                 break;
         }
 
@@ -142,14 +156,32 @@ class Validator{
     }
 
 
-    protected function handlePredefinedRule(string $type, string $value): bool{
+    protected function handlePredefinedRule(string $type, $value): bool{
         switch($type){
             case self::TYPE_EMAIL:
                 return filter_var($value, FILTER_VALIDATE_EMAIL);
                 break;
+            case self::TYPE_FILE:
+                return isset($value['name'], $value['type'], $value['size'], $value['tmp_name'], $value['error']) && $value['error'] == UPLOAD_ERR_OK && is_uploaded_file($value['tmp_name']);
+                break;
         }
 
         return false;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    public function data(string $key){
+        $temp = $this->data;
+        $keys = explode('.',$key);
+
+        foreach ($keys as $key) {
+            $temp = $temp[$key] ?? null;
+        }
+
+        return $temp;
     }
 
 }

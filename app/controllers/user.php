@@ -28,9 +28,9 @@ class UserCtrl implements ControllerInterface {
                 ]
             ],
             'pass' => [
-                Validator::PARAM_MAX_LENGTH => 40,
+                Validator::PARAM_MIN_LENGTH => 8,
                 Validator::PARAM_MESSAGES => [
-                    Validator::PARAM_MAX_LENGTH => 'Password too lng (max 40 chars)'
+                    Validator::PARAM_MIN_LENGTH => 'Password too short (min 8 chars)'
                 ]
             ],
             'pass_confirm' => [
@@ -39,7 +39,7 @@ class UserCtrl implements ControllerInterface {
                     Validator::PARAM_SAME => 'Passwords must match'
                 ]
             ]
-        ], $_POST);
+        ], $_POST+$_FILES);
 
         if($validation->validate()){
             $id = User::insertIntoDb([$_POST['username'], PasswordManager::generateHash($_POST['pass']), $_POST['email'], Utils::time(), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_ADDR'], Rank::getBy('name', 'Member')->id]);

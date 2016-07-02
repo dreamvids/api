@@ -21,6 +21,4 @@ class Video extends Entry {
             'class_name' => 'Comment'
         ]
     ];
-
-    p
 }
