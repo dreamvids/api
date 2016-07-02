@@ -32,6 +32,10 @@ class Response
         return self::$instance;
     }
 
+    public function isSuccess() {
+        return $this->success;
+    }
+
     public function setSuccess(bool $success){
         $this->success = $success;
     }
