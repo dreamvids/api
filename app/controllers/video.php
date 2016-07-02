@@ -18,7 +18,7 @@ class VideoCtrl implements ControllerInterface {
     ];
 
     const MAX_VIDEO_SIZE = 2*10e9; //TODO change
-    const MAX_THUMBNAIM_SIZE = 5*10e6; //TODO change
+    const MAX_THUMBNAIL_SIZE = 5*10e6; //TODO change
 
     public static function create() {
         $validation = new Validator([
@@ -45,12 +45,11 @@ class VideoCtrl implements ControllerInterface {
                 Validator::PARAM_REQUIRED => false,
                 Validator::PARAM_TYPE => Validator::TYPE_FILE,
                 Validator::PARAM_FILE_EXTENSION => self::SUPPORTED_THUMBNAIL_EXTENSIONS,
-                Validator::PARAM_FILE_SIZE=> self::MAX_VIDEO_SIZE,
+                Validator::PARAM_FILE_SIZE=> self::MAX_THUMBNAIL_SIZE,
                 Validator::PARAM_MESSAGES => [
-                    Validator::PARAM_REQUIRED => 'A video file is (obviously) required...',
                     Validator::PARAM_TYPE => 'Error while uploading thumbnail',
                     Validator::PARAM_FILE_EXTENSION => "The supported extensions are : " . implode(", ",self::SUPPORTED_VIDEO_EXTENSIONS),
-                    Validator::PARAM_FILE_SIZE=> "Video too big."
+                    Validator::PARAM_FILE_SIZE=> "Thumbnail too big."
                 ]
             ]
         ]);
