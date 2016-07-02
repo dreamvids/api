@@ -10,7 +10,7 @@ class VideoCtrl implements ControllerInterface {
     use ExistsTrait;
 
     const SUPPORTED_VIDEO_EXTENSIONS = [ //TODO
-        'mp4', 'avi', 'webm', 'htm'
+        'mp4', 'avi', 'webm'
     ];
 
     const SUPPORTED_THUMBNAIL_EXTENSIONS = [ //TODO
