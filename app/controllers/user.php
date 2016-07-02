@@ -13,8 +13,10 @@ class UserCtrl implements ControllerInterface {
             ],
             'username' => [
                 Validator::PARAM_CUSTOM => function($value){ return !User::usernameExists($value); },
+                Validator::PARAM_MAX_LENGTH => 40,
                 Validator::PARAM_MESSAGES => [
-                    Validator::PARAM_CUSTOM => 'Username already taken'
+                    Validator::PARAM_CUSTOM => 'Username already taken',
+                    Validator::PARAM_CUSTOM => 'Username too long (max 40 chars)'
                 ]
             ],
             'email' => [
@@ -25,7 +27,12 @@ class UserCtrl implements ControllerInterface {
                     Validator::PARAM_TYPE => 'Invalid E-Mail address'
                 ]
             ],
-            'pass' => [],
+            'pass' => [
+                Validator::PARAM_MAX_LENGTH => 40,
+                Validator::PARAM_MESSAGES => [
+                    Validator::PARAM_MAX_LENGTH => 'Password too lng (max 40 chars)'
+                ]
+            ],
             'pass_confirm' => [
                 Validator::PARAM_SAME => 'pass',
                 Validator::PARAM_MESSAGES => [
