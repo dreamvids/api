@@ -7,6 +7,7 @@ class System {
     private $webroot;
     private $system;
     private $app;
+    private $config;
     private $api_models;
     private $dv_models;
     private $views;
@@ -25,9 +26,10 @@ class System {
         $this->name = 'API';
 
         // Back-End
-        $this->root = str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']);
+        $this->root = __DIR__ . DIRECTORY_SEPARATOR;
         $this->system = $this->root.'system/';
         $this->app = $this->root.'app/';
+        $this->config = $this->app.'config/';
         $this->api_models = $this->app.'models/api/';
         $this->dv_models = $this->app.'models/dv/';
         $this->views = $this->app.'views/';
@@ -54,7 +56,8 @@ class System {
                 'Validator',
                 'PasswordManager',
                 'Dispatcher',
-                'ControllerInterface'
+                'ControllerInterface',
+                'Config'
             ],
             'api_models' => [
                 'APIClient',
@@ -109,6 +112,10 @@ class System {
 
     public function getSystem() {
         return $this->system;
+    }
+
+    public function getConfig() {
+        return $this->config;
     }
 
     public function getApp() {

@@ -42,6 +42,9 @@ class Response
 
     public function setCode(int $code): Response{
         $this->code = $code;
+        if(400 <= $code && $code <= 599){
+            $this->setSuccess(false);
+        }
         return $this;
     }
 
