@@ -5,13 +5,11 @@ class Channel extends Entry {
     static $associations = [
         'owner' => [
             'type' => self::BELONGS_TO,
-            'class_name' => 'User',
-            'autoload' => true
+            'class_name' => 'User'
         ],
         'videos' => [
             'type' => self::HAS_MANY,
-            'class_name' => 'Video',
-            'autoload' => false
+            'class_name' => 'Video'
         ],
         'admins' => [
             'type' => self::MANY_TO_MANY,

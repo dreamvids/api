@@ -191,13 +191,6 @@ abstract class Model {
 			$options = $options_array['options'];
 			$next = $options_array['next'];
 			$this->loadAssociation($next, $options);
-		}else{
-			foreach(static::$associations as $name => $association){
-				$autoload = $association['autoload'] ?? false;
-				if($autoload){
-					$this->loadAssociation($name);
-				}
-			}
 		}
 	}
 

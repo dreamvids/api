@@ -8,11 +8,12 @@ class User extends Entry {
      */
     public $rank;
 
+    public $owned_channels = [];
+
     static $associations = [
         'rank' => [
             'type' => self::BELONGS_TO,
-            'class_name' => 'Rank',
-            'autoload' => true
+            'class_name' => 'Rank'
         ],
         'owned_channels' => [
             'type' => self::HAS_MANY,

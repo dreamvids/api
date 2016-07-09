@@ -8,13 +8,11 @@ class Video extends Entry {
     static $associations = [
         'poster_channel' => [
             'type' => self::BELONGS_TO,
-            'class_name' => 'Channel',
-            'autoload' => false
+            'class_name' => 'Channel'
         ],
         'visibility' => [
             'type' => self::BELONGS_TO,
-            'class_name' => 'Visibility',
-            'autoload' => true,
+            'class_name' => 'Visibility'
         ],
         'comments' => [
             'type' => self::HAS_MANY,

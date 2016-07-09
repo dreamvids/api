@@ -21,7 +21,7 @@ class System {
 
     private $dependencies;
     private $dependenciesPaths;
-
+//TODO change models loading system
     private function __construct() {
         $this->name = 'API';
 
@@ -57,7 +57,10 @@ class System {
                 'PasswordManager',
                 'Dispatcher',
                 'ControllerInterface',
-                'Config'
+                'Config',
+                'Functions',
+                'Table',
+                'TableRegistry'
             ],
             'api_models' => [
                 'APIClient',
@@ -68,6 +71,7 @@ class System {
             ],
             'dv_models' => [
                 'Rank',
+                'Session',
                 'User',
                 'Channel',
                 'Video',
@@ -172,10 +176,21 @@ class System {
                 $this->loadDependencies($value);
             }
         }else{
-            if(isset($this->dependencies[$type])){
-                foreach($this->dependencies[$type] as $className){
-                    require_once $this->dependenciesPaths[$type].$className.'.php';
-                }
+            switch ($type){
+
+                case 'dv_models':
+                    foreach($this->dependencies[$type] as $className){
+                        require_once $this->dependenciesPaths[$type].'Tables/'.$className.'Table.php';
+                        require_once $this->dependenciesPaths[$type].'Entities/'.$className.'.php';
+                    }
+                    break;
+                default:
+                    if(isset($this->dependencies[$type])){
+                        foreach($this->dependencies[$type] as $className){
+                            require_once $this->dependenciesPaths[$type].$className.'.php';
+                        }
+                    }
+                    break;
             }
         }
     }

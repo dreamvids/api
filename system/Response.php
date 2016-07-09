@@ -17,6 +17,7 @@ class Response
     public $code = 200;
     public $data = [];
     public $errors= [];
+    public $debug = [];
     public $success = true;
 
     protected final function __construct(array $data = [], int $code = 200){
@@ -66,6 +67,10 @@ class Response
         $this->errors[$name] = $value;
     }
 
+    public function addDebug($var){
+        $this->debug[] = $var;
+    }
+
     public function getErrors(): array {
         return $this->errors;
     }
@@ -83,6 +88,9 @@ class Response
     }
 
     protected function renderBody(){
+        if(!Config::get()->read('config.debug')){
+            unset($this->debug);
+        }
         echo json_encode($this, JSON_PRETTY_PRINT);
     }
 

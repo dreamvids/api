@@ -6,6 +6,16 @@ class HomeCtrl implements ControllerInterface {
 
     public static function fetch() {
         Response::get()->addData('TITLE', 'Accueil');
+        debug([
+            'channel' => ChannelTable::get()->getAssociations(),
+            'channelAdmin' => ChannelAdminTable::get()->getAssociations(),
+            'comment' => CommentTable::get()->getAssociations(),
+            'rank' => RankTable::get()->getAssociations(),
+            'session' => SessionTable::get()->getAssociations(),
+            'user' => UserTable::get()->getAssociations(),
+            'video' => VideoTable::get()->getAssociations(),
+            'visibility' => VisibilityTable::get()->getAssociations()
+        ]);
     }
 
     public static function exists() {

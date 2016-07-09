@@ -6,8 +6,7 @@ class Comment extends Entry {
     static $associations = [
         'poster' => [
             'type' => self::BELONGS_TO,
-            'class_name' => 'User',
-            'autoload' => true
+            'class_name' => 'User'
         ],
         'video' => [
             'type' => self::BELONGS_TO,
@@ -16,8 +15,7 @@ class Comment extends Entry {
         'replies' => [
             'type' => self::HAS_MANY,
             'class_name' => 'Comment',
-            'field_name' => 'parent_id',
-            'autoload' => true
+            'field_name' => 'parent_id'
         ]
     ];
 
