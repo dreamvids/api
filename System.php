@@ -60,7 +60,8 @@ class System {
                 'Config',
                 'Functions',
                 'Table',
-                'TableRegistry'
+                'TableRegistry',
+                'Query'
             ],
             'api_models' => [
                 'APIClient',
