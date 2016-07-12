@@ -8,6 +8,7 @@ class Query
     protected $table = null;
     protected $options = [];
     protected $data = [];
+    protected $hydrated = true;
 
     public function __construct(Table $table, $options = []){
         $this->table = $table;
@@ -48,6 +49,20 @@ class Query
         return $this;
     }
 
+    public function asList($field){
+        $this->select($field);
+        $this->hydrated = false;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isHydrated()
+    {
+        return $this->hydrated;
+    }
+
     protected function generateWhereStatement(){
         $query = "";
         $data = [];
@@ -58,11 +73,14 @@ class Query
                 $andParts = [];
                 foreach ($conditions as $field => $value){
                     if(is_array($value)){
-
-                        $inString = str_repeat('?', count($value));
-                        $inString = implode(', ', str_split($inString));
-                        $andParts[] = $field . "  IN (".$inString.")";
-                        $data = array_merge($data, $value);
+                        if(empty($value)){
+                            $andParts[] = " 0 ";
+                        }else{
+                            $inString = str_repeat('?', count($value));
+                            $inString = implode(', ', str_split($inString));
+                            $andParts[] = $field . "  IN (".$inString.")";
+                            $data = array_merge($data, $value);
+                        }
                     }else{
                         if(strtoupper(substr($field, -5, 5)) == ' LIKE'){
                             $andParts[] = $field . " ?";
@@ -122,6 +140,10 @@ class Query
 
     public function toArray(){
         return $this->execute();
+    }
+
+    public function getAssociationsToLoad(){
+        return $this->options['associations'] ?? [];
     }
 
 }

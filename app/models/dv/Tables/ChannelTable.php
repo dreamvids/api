@@ -7,6 +7,7 @@ class ChannelTable extends Table {
     {
         $this
             ->belongsTo(User::class, 'owner')
+            ->hasMany(Video::class, 'videos')
             ->hasManyToMany(User::class, 'admins', ChannelAdmin::class);
     }
 }

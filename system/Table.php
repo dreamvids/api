@@ -13,6 +13,8 @@ abstract class Table
      */
     protected static $prefix = "dv";
 
+    protected static $executedQueries = [];
+
     /**
      * @var $connection DB
      */
@@ -53,6 +55,10 @@ abstract class Table
         return TableRegistry::get(substr(get_called_class(), 0, -5));
     }
 
+    public function getById($id){
+        return $this->find()->where(['id' => $id])->first();
+    }
+
     protected function hasOne(string $foreignClassName, string $varName = "", string $foreignFieldName = ""){
         if($varName == ""){
             $varName = strtolower($foreignClassName);
@@ -80,7 +86,7 @@ abstract class Table
 
         if($foreignFieldName == ""){
             $tableClass = TableRegistry::entityToTable($foreignClassName);
-            $foreignFieldName = $tableClass::getTableName() . '_id';
+            $foreignFieldName = static::getTableName() . '_id';
         }
 
         $type = self::HAS_MANY;
@@ -137,23 +143,41 @@ abstract class Table
             'associatedClassName' => $foreignClassName,
             'foreignFieldName' => $foreignFieldName,
             'localFieldName' => $localFieldName,
-            'throughClass' => $joinClass,
+            'joinClass' => $joinClass,
             'type' => $type
         ];
-
         return $this;
     }
 
-    /**
-     * TODO
-     */
-    protected function fetchAssociation($varName){
+    protected function fetchAssociation($varName, $entity, $associationsToLoad = []){
+        $associationSettings = $this->associations[$varName];
+        $table = TableRegistry::get($associationSettings['associatedClassName']);
+        switch ($associationSettings['type']) {
+            case self::HAS_ONE:
+                $associatedEntity = $table->find()->where([$associationSettings['associatedFieldName'] => $entity->id ])->loadAssociations($associationsToLoad)->first();
+                $entity->$varName = $associatedEntity;
+                break;
+            case self::BELONGS_TO:
+                $associatedEntity = $table->find()->where(['id' => $entity->{$associationSettings['associatedFieldName']} ])->loadAssociations($associationsToLoad)->first();
+                $entity->$varName = $associatedEntity;
+                break;
+            case self::HAS_MANY:
+                $associatedEntity = $table->find()->where([$associationSettings['associatedFieldName'] => $entity->id])->loadAssociations($associationsToLoad)->toArray();
+                $entity->$varName = $associatedEntity;
+                break;
+            case self::MANY_TO_MANY:
+                $joinTable = TableRegistry::get($associationSettings['joinClass']);
+                $ids = $joinTable->find()->asList($associationSettings['foreignFieldName'])->where([$associationSettings['localFieldName'] => $entity->id])->toArray();
+                $associatedEntities = $table->find()->where(['id' => $ids])->loadAssociations($associationsToLoad)->toArray();
+                $entity->$varName = $associatedEntities;
+                break;
+        }
     }
 
     /**
      * @return string
      */
-    public static function getTableName()
+    public static function getTableName(): string
     {
         return static::$table_name;
     }
@@ -161,7 +185,7 @@ abstract class Table
     /**
      * @return string
      */
-    public static function getPrefix()
+    public static function getPrefix(): string
     {
         return self::$prefix;
     }
@@ -169,38 +193,38 @@ abstract class Table
     /**
      * @return string
      */
-    public static function getFullName(){
+    public static function getFullName(): string{
         return static::getPrefix().'_'.static::getTableName();
     }
 
     /**
      * @return array
      */
-    public function getAssociations()
+    public function getAssociations(): array
     {
         return $this->associations;
     }
 
-    public function newQuery($options = []){
+    public function newQuery($options = []): Query{
         return new Query($this, $options);
     }
 
-    public function find($finder = 'all', $options = []){
+    public function find($finder = 'all', $options = []): Query{
         $methodName = 'find'.ucfirst($finder);
         if(method_exists($this, $methodName)){
             $query = $this->newQuery($options);
             $this->$methodName($query);
             return $query;
         }else{
-            throw new Exception('Method \'find\'.ucfirst($finder) does not exists in ' . get_called_class());
+            throw new Exception('Method '. $methodName .'(Query $query, $options = []) does not exists in ' . get_called_class());
         }
     }
 
-    public function count($where){
+    public function count($where): int{
         return $this->newQuery()->where($where)->count();
     }
 
-    public function exists($where){
+    public function exists($where): bool{
         return $this->count($where) > 0;
     }
 
@@ -208,16 +232,42 @@ abstract class Table
         return $query->select("*")->options($options);
     }
 
-    public function execute(Query $query){
-        $stmt = $this->connection->prepare($query);
-        if(!$stmt->execute($query->getData())){
-            throw new PDOException(implode(' ,', $stmt->errorInfo()), $stmt->errorCode());
-        }
-        $stmt->setFetchMode(PDO::FETCH_CLASS, self::getEntityName());
-        return $stmt->fetchAll();
+    public function findList(Query $query, $options = []){
+        return $this->findAll($query, $options)->asList('id');
     }
 
-    public static function getEntityName(){
+    /**
+     * @return array
+     */
+    public static function getExecutedQueries()
+    {
+        return self::$executedQueries;
+    }
+
+    public function execute(Query $query){
+        self::$executedQueries[] = (string)$query;
+        $stmt = $this->connection->prepare($query);
+        if(!$stmt->execute($query->getData())){
+            throw new PDOException(implode(' ,', $stmt->errorInfo())/*, $stmt->errorCode()*/);
+        }
+        if($query->isHydrated()){
+            $stmt->setFetchMode(PDO::FETCH_CLASS, self::getEntityName());
+        }else{
+            $stmt->setFetchMode(PDO::FETCH_COLUMN, 0);
+        }
+        $entities = $stmt->fetchAll();
+        foreach ($query->getAssociationsToLoad() as $association){
+            foreach($entities as $entity){
+                $associationParts = explode('.', $association);
+                $association = array_shift($associationParts);
+                $this->fetchAssociation($association, $entity, $associationParts);
+            }
+        }
+
+        return $entities;
+    }
+
+    public static function getEntityName(): string{
         return substr(get_called_class(), 0, -5);
     }
 
