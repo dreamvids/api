@@ -2,15 +2,9 @@
 class Request {
 	private static $instance = null;
 	private $args;
-	private $client;
-	private $controller;
-	private $method;
 	
 	private function __construct() {
-		$this->args = (isset($_GET['arg']) ) ? explode('/', trim($_GET['arg'], '/')) : ['home'];
-		$this->client = APIClient::getBy('name', 'Guest');
-		$this->controller = ucfirst($this->args[0])."Ctrl";
-		$this->method = $_SERVER['REQUEST_METHOD'];
+		$this->args = (isset($_GET['arg']) ) ? explode('/', $_GET['arg']) : ['home'];
 	}
 	
 	public static function get(): Request {
@@ -22,52 +16,10 @@ class Request {
 	}
 	
 	public function getArg(int $i): string {
-		if ($this->countArgs() > $i) {
+		if (count($this->args) > $i) {
 			return $this->args[$i];
 		}
 
 		return '';
-	}
-
-	public function countArgs(): int {
-		return count($this->args);
-	}
-
-	public function getMethodToCall(): string {
-		if ($this->countArgs() > 1) {
-			if (method_exists($this->controller, $this->args[1])) {
-				return $this->args[1];
-			}
-			else {
-				$methods = [
-					'HEAD' => 'exists',
-					'GET' => 'read',
-					'PUT' => 'update',
-					'DELETE' => 'delete'
-				];
-
-				return $methods[$this->method] ?? '';
-			}
-		}
-		else {
-			$methods = [
-				'POST' => 'create',
-				'GET' => 'fetch'
-			];
-
-			return $methods[$this->method] ?? '';
-		}
-	}
-
-	public function getClient(): APIClient {
-		return $this->client;
-	}
-
-	public function setClient(APIClient $client) {
-		$this->client = $client;
-	}
-
-	public function getMethod(): string	{
-		return $this->method;
 	}
 }

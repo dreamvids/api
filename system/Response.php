@@ -2,8 +2,6 @@
 
 class Response
 {
-    private static $instance;
-
     static $codes = [
         200 => "OK",
         400 => "Bad Request",
@@ -20,17 +18,9 @@ class Response
     public $debug = [];
     public $success = true;
 
-    protected final function __construct(array $data = [], int $code = 200){
+    public function __construct(int $code = 200, array $data = []){
         $this->data = $data;
         $this->code = $code;
-    }
-
-    public static function get(): Response {
-        if (self::$instance == null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
     }
 
     public function isSuccess() {

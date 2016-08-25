@@ -1,37 +1,40 @@
 <?php
+define('NAME', 'MVC');
+define('POST', $_SERVER['REQUEST_METHOD'] == 'POST');
+define('ROOT', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']), true);
+define('WEBROOT', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']), true);
+define('BEANS', ROOT.'beans/');
+define('SYSTEM', ROOT.'system/');
+define('APP', ROOT.'app/');
+define('MODELS', APP.'models/');
+define('VIEWS', APP.'views/');
+define('CONTROLLERS', APP.'controllers/');
+define('ASSETS', WEBROOT.'assets/');
+define('CSS', ASSETS.'css/');
+define('JS', ASSETS.'js/');
+define('FONTS', ASSETS.'fonts/');
+define('IMG', ASSETS.'img/');
 
-// Setting up the exception handler
 
-function exceptionsHandler($code, $message = null, $file = null, $line = null){
-    if(Config::get()->read("config.debug")){
-        if($code instanceof Exception){
-            $exception = $code;
-            Response::get()->addError('exception', $exception);
-        }else{
-            Response::get()->addError('exception', [
-                'code' => $code,
-                'message' => $message,
-                'file' => $file,
-                'line' => $line,
-                'stacktrace' => debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT)
-            ]);
-        }
+// System requires
+require_once SYSTEM.'ModelInterface.php';
+require_once SYSTEM.'ResourceInterface.php';
+require_once SYSTEM.'Utils.php';
+require_once SYSTEM.'Database.php';
+require_once SYSTEM.'Persist.php';
+require_once SYSTEM.'Controller.php';
+require_once SYSTEM.'Request.php';
+require_once SYSTEM.'Data.php';
 
-    }
-    HTTPError::InternalServerError();
-    Response::get()->render();
+// Beans
+require_once BEANS.'Example.php';
+
+// Models
+require_once MODELS.'Example.php';
+
+if (!file_exists(CONTROLLERS.Request::get()->getArg(0).'.php') ) {
+	Controller::error404();
+	exit();
 }
-set_error_handler('exceptionsHandler');
-set_exception_handler('exceptionsHandler');
 
-//Starting the app
-
-// System constants
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'System.php';
-// All requires
-System::get()->loadDependencies(['system', 'traits', 'api_models', 'dv_models']);
-
-APIToken::flush();
-
-Dispatcher::get()->handleRequest();
-Response::get()->render();
+require_once CONTROLLERS.Request::get()->getArg(0).'.php';

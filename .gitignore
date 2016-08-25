@@ -1,9 +1,5 @@
 .project
 .cache/
 .settings/
-.buildpath
 .idea/
 pull.php
-adminer.php
-uploads/*
-app/config/*.php
