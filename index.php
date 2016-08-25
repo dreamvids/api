@@ -37,11 +37,11 @@ require_once BEANS.'Example.php';
 require_once MODELS.'Example.php';
 
 if (!file_exists(CONTROLLERS.Request::get()->getArg(0).'.php') ) {
-	HTTPError::error404();
-	exit();
+	HTTPError::error404()->render();
 }
 
-$classname = ucfirst(Request::get()->getArg(0)).'Ctrl';
+require_once CONTROLLERS.Request::get()->getArg(0).'.php';
+
 $methods = [
 	'GET' => 'fetch',
 	'POST' => 'create',
@@ -49,7 +49,7 @@ $methods = [
 	'PATCH' => 'update',
 	'DELETE' => 'delete'
 ];
-
+$classname = ucfirst(Request::get()->getArg(0)).'Ctrl';
 if (Request::get()->getArg(1) != '') {
 	if (method_exists($classname, Request::get()->getArg(1))) {
 		$methods['GET'] = Request::get()->getArg(1);
@@ -59,7 +59,12 @@ if (Request::get()->getArg(1) != '') {
 	}
 }
 
-$methodname = $methods[$_SERVER['REQUEST_METHOD']];
-require_once CONTROLLERS.Request::get()->getArg(0).'.php';
+if (isset($methods[$_SERVER['REQUEST_METHOD']])) {
+	$methodname = $methods[$_SERVER['REQUEST_METHOD']];
+}
+else {
+	HTTPError::error405()->render();
+}
+
 $rep = $classname::$methodname();
 $rep->render();

@@ -1,23 +1,26 @@
 <?php
 abstract class DB {
 	private static
-	$instance = null,
-	$db_host = 'localhost',
-	$db_name = '',
-	$db_user = 'root',
-	$db_pass = '';
-	
+		$instance = null;
+
 	public static function get(): PDO {
 		if (self::$instance == null) {
+
+			$credentials = Config::get()->read("database");
+
 			try	{
-				self::$instance = new PDO('mysql:host='.self::$db_host.';dbname='.self::$db_name, self::$db_user, self::$db_pass);
-				self::$instance->exec("SET CHARACTER SET utf8");
+				$options = [
+					PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+				];
+				self::$instance = new PDO('mysql:host='.$credentials['host'].';dbname='.$credentials['dbname'], $credentials['username'], $credentials['password'], $options);
 			}
 			catch (Exception $e) {
-				die('Erreur : ' . $e->getMessage());
+				$rep = new Response(500);
+				$rep->addError('status', "Can't connect to database");
+				$rep->render();
 			}
 		}
-		
+
 		return self::$instance;
 	}
 }

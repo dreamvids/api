@@ -1,5 +1,9 @@
 <?php
 abstract class HTTPError {
+	public static function error301(): Response {
+		return new Response(301);
+	}
+
 	public static function error400(): Response {
 		return new Response(400);
 	}

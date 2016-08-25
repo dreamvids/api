@@ -2,9 +2,11 @@
 class Request {
 	private static $instance = null;
 	private $args;
+	private $method;
 	
 	private function __construct() {
 		$this->args = (isset($_GET['arg']) ) ? explode('/', $_GET['arg']) : ['home'];
+		$this->method = $_SERVER['REQUEST_METHOD'];
 	}
 	
 	public static function get(): Request {
@@ -22,4 +24,9 @@ class Request {
 
 		return '';
 	}
+
+	public function getMethod() {
+		return $this->method;
+	}
+
 }

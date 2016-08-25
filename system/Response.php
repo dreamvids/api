@@ -5,6 +5,7 @@ class Response
     static $codes = [
         200 => "OK",
         201 => "Created",
+        301 => "Moved Permanently",
         400 => "Bad Request",
         401 => "Unauthorized",
         403 => "Forbidden",
@@ -21,8 +22,8 @@ class Response
     public $success = true;
 
     public function __construct(int $code = 200, array $data = []){
-        $this->data = $data;
-        $this->code = $code;
+        $this->setCode($code);
+        $this->setData($data);
     }
 
     public function isSuccess() {
@@ -71,7 +72,12 @@ class Response
     }
 
     protected function renderHeaders(){
-        header('Content-type: application/json; charset=utf-8');
+        if (Request::get()->getMethod() != 'HEAD') {
+            header('Content-type: application/json; charset=utf-8');
+        }
+        else {
+            header('Content-length: 0');
+        }
         header('Access-Control-Allow-Origin: *');
         header('HTTP/1.1 ' . $this->code . " " . self::$codes[$this->code]);
     }

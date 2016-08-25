@@ -7,22 +7,24 @@ class HomeCtrl implements ControllerInterface {
     }
 
     public static function create(): Response {
-        // TODO: Implement create() method.
+        return new Response(201);
     }
 
     public static function exists(): Response {
-        // TODO: Implement exists() method.
+        return new Response(409);
     }
 
     public static function read(): Response {
-        // TODO: Implement read() method.
+        $rep = new Response();
+        $rep->addData('id', Request::get()->getArg(1));
+        return $rep;
     }
 
     public static function update(): Response {
-        // TODO: Implement update() method.
+        return new Response();
     }
 
     public static function delete(): Response {
-        // TODO: Implement delete() method.
+        return new Response();
     }
 }
