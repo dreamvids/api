@@ -1,6 +1,5 @@
 <?php
 define('NAME', 'MVC');
-define('POST', $_SERVER['REQUEST_METHOD'] == 'POST');
 define('ROOT', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']), true);
 define('WEBROOT', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']), true);
 define('BEANS', ROOT.'beans/');
@@ -24,10 +23,12 @@ require_once SYSTEM.'ControllerInterface.php';
 require_once SYSTEM.'Utils.php';
 require_once SYSTEM.'Database.php';
 require_once SYSTEM.'Persist.php';
-require_once SYSTEM.'Controller.php';
+require_once SYSTEM.'HTTPError.php';
 require_once SYSTEM.'Request.php';
 require_once SYSTEM.'Config.php';
 require_once SYSTEM.'PasswordManager.php';
+require_once SYSTEM.'Response.php';
+require_once SYSTEM.'Validator.php';
 
 // Beans
 require_once BEANS.'Example.php';
@@ -58,4 +59,7 @@ if (Request::get()->getArg(1) != '') {
 	}
 }
 
+$methodname = $methods[$_SERVER['REQUEST_METHOD']];
 require_once CONTROLLERS.Request::get()->getArg(0).'.php';
+$rep = $classname::$methodname();
+$rep->render();

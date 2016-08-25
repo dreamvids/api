@@ -26,11 +26,16 @@ class Response
     }
 
     public function isSuccess() {
-        return ($this->code < 400);
+        return $this->success;
+    }
+
+    public function setSuccess() {
+        $this->success = ($this->code < 400);
     }
 
     public function setCode(int $code) {
         $this->code = $code;
+        $this->setSuccess();
     }
 
     public function addData(string $name, $value) {
