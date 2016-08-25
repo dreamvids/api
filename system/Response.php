@@ -4,11 +4,13 @@ class Response
 {
     static $codes = [
         200 => "OK",
+        201 => "Created",
         400 => "Bad Request",
         401 => "Unauthorized",
         403 => "Forbidden",
         404 => "Not Found",
         405 => "Method not allowed",
+        409 => "Conflict",
         500 => "Internal Server Error"
     ];
 
@@ -24,19 +26,11 @@ class Response
     }
 
     public function isSuccess() {
-        return $this->success;
+        return ($this->code < 400);
     }
 
-    public function setSuccess(bool $success){
-        $this->success = $success;
-    }
-
-    public function setCode(int $code): Response{
+    public function setCode(int $code) {
         $this->code = $code;
-        if(400 <= $code && $code <= 599){
-            $this->setSuccess(false);
-        }
-        return $this;
     }
 
     public function addData(string $name, $value) {

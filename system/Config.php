@@ -15,7 +15,7 @@ class Config
 
     public function __construct()
     {
-        $this->configRoot = System::get()->getConfig();
+        $this->configRoot = CONFIG;
         $this->loadAll();
     }
 
