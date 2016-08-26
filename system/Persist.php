@@ -91,6 +91,15 @@ abstract class Persist {
         return self::getFilledObject($classname, $res);
     }
 
+    public static function readBy(string $classname, string $column, string $value): Resourcable {
+        $classname = '\Bean\\'.$classname;
+        $table_name = $classname::getTableName();
+        $req = DB::get()->prepare("SELECT * FROM $table_name WHERE $column = ?");
+        $req->execute([$value]);
+        $res = $req->fetch();
+        return self::getFilledObject($classname, $res);
+    }
+
     public static function update(Resourcable $object) {
         $classname = get_class($object);
         $table_name = $classname::getTableName();

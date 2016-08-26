@@ -31,10 +31,11 @@ require_once SYSTEM.'Response.php';
 require_once SYSTEM.'Validator.php';
 
 // Beans
-require_once BEANS.'Example.php';
+require_once BEANS.'APIClient.php';
+require_once BEANS.'APIPermission.php';
 
 // Models
-require_once MODELS.'Example.php';
+require_once MODELS.'APIClient.php';
 
 if (!file_exists(CONTROLLERS.Request::get()->getArg(0).'.php') ) {
 	HTTPError::error404()->render();
@@ -42,7 +43,7 @@ if (!file_exists(CONTROLLERS.Request::get()->getArg(0).'.php') ) {
 
 require_once CONTROLLERS.Request::get()->getArg(0).'.php';
 
-$methods = [
+$_METHODS = [
 	'GET' => 'fetch',
 	'POST' => 'create',
 	'HEAD' => 'exists',
@@ -52,19 +53,25 @@ $methods = [
 $classname = ucfirst(Request::get()->getArg(0)).'Ctrl';
 if (Request::get()->getArg(1) != '') {
 	if (method_exists($classname, Request::get()->getArg(1))) {
-		$methods['GET'] = Request::get()->getArg(1);
+		$_METHODS['GET'] = Request::get()->getArg(1);
 	}
 	else {
-		$methods['GET'] = 'read';
+		$_METHODS['GET'] = 'read';
 	}
 }
 
-if (isset($methods[$_SERVER['REQUEST_METHOD']])) {
-	$methodname = $methods[$_SERVER['REQUEST_METHOD']];
+if (isset($_METHODS[Request::get()->getMethod()])) {
+	$methodname = $_METHODS[Request::get()->getMethod()];
 }
 else {
 	HTTPError::error405()->render();
 }
 
-$rep = $classname::$methodname();
-$rep->render();
+$client = \Model\APIClient::authenticate();
+if ($client != null) {
+	if (\Model\APIClient::hasPermission($client, $_METHODS)) {
+		$rep = $classname::$methodname();
+		$rep->render();
+	}
+}
+HTTPError::error403()->render();
