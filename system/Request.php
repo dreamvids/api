@@ -28,5 +28,18 @@ class Request {
 	public function getMethod() {
 		return $this->method;
 	}
+	
+	public function decodeBody() {
+		if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
+			if(($body = json_decode(file_get_contents('php://input'), true)) !== null){
+				$_POST = $body;
+			}else{
+				throw new JsonException(json_last_error_msg(), json_last_error());
+			}
+		}
+		else {
+			parse_str(file_get_contents('php://input'), $_POST);
+		}
+	}
 
 }

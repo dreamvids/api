@@ -29,6 +29,7 @@ require_once SYSTEM.'Config.php';
 require_once SYSTEM.'PasswordManager.php';
 require_once SYSTEM.'Response.php';
 require_once SYSTEM.'Validator.php';
+require_once SYSTEM.'JsonException.php';
 
 // Beans
 require_once BEANS.'APIClient.php';
@@ -67,11 +68,12 @@ else {
 if (isset($_METHODS[Request::get()->getMethod()])) {
 	$methodname = $_METHODS[Request::get()->getMethod()];
 	if (Request::get()->getMethod() != 'GET') {
-		if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
-			$_POST = json_decode(file_get_contents('php://input'), true);
-		}
-		else {
-			parse_str(file_get_contents('php://input'), $_POST);
+		try{
+			Request::get()->decodeBody();
+		}catch (JsonException $e){
+			$response = HTTPError::error400();
+			$response->addError("json", $e->getMessage());
+			$response->render();
 		}
 	}
 }
