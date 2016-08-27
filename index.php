@@ -34,6 +34,7 @@ require_once SYSTEM.'Validator.php';
 require_once BEANS.'APIClient.php';
 require_once BEANS.'APIPermission.php';
 require_once BEANS.'User.php';
+require_once BEANS.'Rank.php';
 
 // Models
 require_once MODELS.'APIClient.php';
@@ -44,25 +45,35 @@ if (!file_exists(CONTROLLERS.Request::get()->getArg(0).'.php') ) {
 
 require_once CONTROLLERS.Request::get()->getArg(0).'.php';
 
-$_METHODS = [
-	'GET' => 'fetch',
-	'POST' => 'create',
-	'HEAD' => 'exists',
-	'PATCH' => 'update',
-	'DELETE' => 'delete'
-];
 $classname = ucfirst(Request::get()->getArg(0)).'Ctrl';
 if (Request::get()->getArg(1) != '') {
+	$_METHODS = [
+		'GET' => 'read',
+		'HEAD' => 'exists',
+		'PATCH' => 'update',
+		'DELETE' => 'delete'
+	];
 	if (method_exists($classname, Request::get()->getArg(1))) {
 		$_METHODS['GET'] = Request::get()->getArg(1);
 	}
-	else {
-		$_METHODS['GET'] = 'read';
-	}
+}
+else {
+	$_METHODS = [
+		'GET' => 'fetch',
+		'POST' => 'create'
+	];
 }
 
 if (isset($_METHODS[Request::get()->getMethod()])) {
 	$methodname = $_METHODS[Request::get()->getMethod()];
+	if (Request::get()->getMethod() != 'GET') {
+		if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
+			$_POST = json_decode(file_get_contents('php://input'), true);
+		}
+		else {
+			parse_str(file_get_contents('php://input'), $_POST);
+		}
+	}
 }
 else {
 	HTTPError::error405()->render();
