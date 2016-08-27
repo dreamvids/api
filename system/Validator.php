@@ -77,15 +77,17 @@ class Validator{
      * Validate one param of a rule
      * @param $name
      * @param $paramName
+     * @param $rule
+     * @param $isRuleAll
      * @return bool
      */
-    protected function checkRuleParam(string $name, string $paramName): bool{
-        $rule = $this->rules[$name];
-        if($rule[$paramName] === self::$default_rule[$paramName]){ //If this rule's param is not changed, then it's automatically valid
-            if(isset($this->rules[self::RULE_ALL][$paramName])){
-                $rule = $this->rules[self::RULE_ALL][$paramName];
+    protected function checkRuleParam(string $name, string $paramName, array $rule = null, bool $isRuleAll = false): bool{
+        $rule = $rule === null ? $this->rules[$name] : $rule;
+        if($rule[$paramName] === self::$default_rule[$paramName]){ //If this rule's param is still default
+            if(!$isRuleAll && isset($this->rules[self::RULE_ALL][$paramName])){ //Check if it's defined in RULE_ALL
+                return $this->checkRuleParam($name, $paramName, $this->rules[self::RULE_ALL], true);
             }else{
-                return true;
+                return true; //Otherwise return true
             }
         }
 
@@ -183,5 +185,4 @@ class Validator{
 
         return $temp;
     }
-
 }
