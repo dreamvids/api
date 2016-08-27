@@ -83,7 +83,7 @@ class Validator{
         $rule = $this->rules[$name];
         if($rule[$paramName] === self::$default_rule[$paramName]){ //If this rule's param is not changed, then it's automatically valid
             if(isset($this->rules[self::RULE_ALL][$paramName])){
-                $rule = $this->rules[self::RULE_ALL];
+                $rule = $this->rules[self::RULE_ALL][$paramName];
             }else{
                 return true;
             }
