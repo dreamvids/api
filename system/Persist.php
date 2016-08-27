@@ -28,11 +28,12 @@ abstract class Persist {
         return $res;
     }
 
-    public static function fetchAll(string $classname, string $cond = ''): array {
+    public static function fetchAll(string $classname, string $cond = '', array $values = []): array {
         $classname = '\Bean\\'.$classname;
         $table_name = $classname::getTableName();
-        $where = ($cond != '') ? ' WHERE '.$cond : '';
-        $req = DB::get()->query("SELECT * FROM $table_name".$where);
+        $cond = ($cond != '') ? ' '.$cond : '';
+        $req = DB::get()->prepare("SELECT * FROM $table_name".$cond);
+        $req->execute($values);
         $res = [];
         $i = 0;
         while ($rep = $req->fetch()) {

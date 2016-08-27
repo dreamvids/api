@@ -33,6 +33,7 @@ require_once SYSTEM.'Validator.php';
 // Beans
 require_once BEANS.'APIClient.php';
 require_once BEANS.'APIPermission.php';
+require_once BEANS.'User.php';
 
 // Models
 require_once MODELS.'APIClient.php';
