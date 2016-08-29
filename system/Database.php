@@ -15,7 +15,7 @@ abstract class DB {
 				self::$instance = new PDO('mysql:host='.$credentials['host'].';dbname='.$credentials['dbname'], $credentials['username'], $credentials['password'], $options);
 			}
 			catch (Exception $e) {
-				$rep = new Response(500);
+				$rep = new Response(Response::HTTP_500_INTERNAL_SERVER_ERROR);
 				$rep->addError('status', "Can't connect to database");
 				$rep->render();
 			}

@@ -20,7 +20,7 @@ class Router {
             $this->controller = Request::get()->getArg(0);
         }
         else {
-            HTTPError::error404()->render();
+            (new Response(Response::HTTP_404_NOT_FOUND))->render();
         }
     }
 

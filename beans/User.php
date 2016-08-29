@@ -166,5 +166,6 @@ class User implements \Resourcable, \JsonSerializable {
      */
     public function setRankId($rank_id) {
         $this->rank_id = $rank_id;
+        $this->rank = \Persist::read('Rank', $rank_id);
     }
 }

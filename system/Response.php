@@ -2,6 +2,17 @@
 
 class Response
 {
+    const HTTP_200_OK = 200;
+    const HTTP_201_CREATED = 201;
+    const HTTP_301_MOVED_PERMANENTLY = 301;
+    const HTTP_400_BAD_REQUEST = 400;
+    const HTTP_401_UNAUTHORIZED = 401;
+    const HTTP_403_FORBIDDEN = 403;
+    const HTTP_404_NOT_FOUND = 404;
+    const HTTP_405_METHOD_NOT_ALLOWED = 405;
+    const HTTP_409_CONFLICT = 409;
+    const HTTP_500_INTERNAL_SERVER_ERROR = 500;
+
     static $codes = [
         200 => "OK",
         201 => "Created",

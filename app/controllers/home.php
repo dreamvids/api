@@ -7,11 +7,11 @@ class HomeCtrl implements ControllerInterface {
     }
 
     public static function create(): Response {
-        return new Response(201);
+        return new Response(Response::HTTP_201_CREATED);
     }
 
     public static function exists(): Response {
-        return new Response(409);
+        return new Response(Response::HTTP_409_CONFLICT);
     }
 
     public static function read(): Response {

@@ -23,7 +23,6 @@ require_once SYSTEM.'ControllerInterface.php';
 require_once SYSTEM.'Utils.php';
 require_once SYSTEM.'Database.php';
 require_once SYSTEM.'Persist.php';
-require_once SYSTEM.'HTTPError.php';
 require_once SYSTEM.'Request.php';
 require_once SYSTEM.'Config.php';
 require_once SYSTEM.'PasswordManager.php';
@@ -69,14 +68,14 @@ if (isset($_METHODS[Request::get()->getMethod()])) {
 		try{
 			Request::get()->decodeBody();
 		}catch (JsonException $e){
-			$response = HTTPError::error400();
+			$response = new Response(Response::HTTP_404_NOT_FOUND);
 			$response->addError("json", $e->getMessage());
 			$response->render();
 		}
 	}
 }
 else {
-	HTTPError::error405()->render();
+	(new Response(Response::HTTP_405_METHOD_NOT_ALLOWED))->render();
 }
 
 $client = \Model\APIClient::authenticate();
@@ -86,4 +85,4 @@ if ($client != null) {
 		$rep->render();
 	}
 }
-HTTPError::error403()->render();
+(new Response(Response::HTTP_403_FORBIDDEN))->render();
