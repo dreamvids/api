@@ -30,6 +30,7 @@ require_once SYSTEM.'PasswordManager.php';
 require_once SYSTEM.'Response.php';
 require_once SYSTEM.'Validator.php';
 require_once SYSTEM.'JsonException.php';
+require_once SYSTEM.'Router.php';
 
 // Beans
 require_once BEANS.'APIClient.php';
@@ -40,11 +41,8 @@ require_once BEANS.'Rank.php';
 // Models
 require_once MODELS.'APIClient.php';
 
-if (!file_exists(CONTROLLERS.Request::get()->getArg(0).'.php') ) {
-	HTTPError::error404()->render();
-}
-
-require_once CONTROLLERS.Request::get()->getArg(0).'.php';
+// Controller
+require_once Router::get()->getPathToRequire();
 
 $classname = ucfirst(Request::get()->getArg(0)).'Ctrl';
 if (Request::get()->getArg(1) != '') {

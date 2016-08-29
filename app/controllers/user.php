@@ -50,7 +50,7 @@ class UserCtrl implements ControllerInterface {
         ]);
         $rep = new Response();
         if (isset($_POST['username'], $_POST['password'], $_POST['email'], $_POST['ip'])) {
-            if (true/*$validation->validate()*/) {
+            if ($validation->validate()) {
                 $user = new \Bean\User(
                     0,
                     $_POST['username'],
