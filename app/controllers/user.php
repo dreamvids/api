@@ -8,7 +8,7 @@
  */
 class UserCtrl implements ControllerInterface {
     public static function fetch(): Response {
-        $rep = \Model\Session::isPermit('$session->user->rank->getName() == "Admin"');
+        $rep = PermChecker::get()->rank('Admin')->isPermit();
         $rep->addData('users', Persist::fetchAll('User'));
         return $rep;
     }
@@ -75,16 +75,17 @@ class UserCtrl implements ControllerInterface {
     }
 
     public static function exists(): Response {
-        if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
+        return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
+        /*if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
             return new Response(Response::HTTP_200_OK);
         }
 
-        return new Response(Response::HTTP_404_NOT_FOUND);
+        return new Response(Response::HTTP_404_NOT_FOUND);*/
     }
 
     public static function read(): Response {
         if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
-            $rep = new Response();
+            $rep = PermChecker::get()->id(Request::get()->getArg(1))->or(PermChecker::get()->rank('Admin'))->isPermit();
             $rep->addData('user', Persist::read('User', Request::get()->getArg(1)));
             return $rep;
         }
@@ -94,6 +95,7 @@ class UserCtrl implements ControllerInterface {
 
     public static function update(): Response {
         if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
+            $rep = PermChecker::get()->id(Request::get()->getArg(1))->or(PermChecker::get()->rank('Admin'))->isPermit();
             $user = Persist::read('User', Request::get()->getArg(1));
             $validation = new Validator([
                 'email' => [
@@ -130,7 +132,6 @@ class UserCtrl implements ControllerInterface {
                     ]
                 ]
             ]);
-            $rep = new Response();
             if ($validation->validate()) {
                 $user->setUsername($_POST['username']);
                 $user->setEmail($_POST['email']);

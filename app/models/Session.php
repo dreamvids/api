@@ -19,18 +19,4 @@ class Session implements \Modelable {
 
         return null;
     }
-
-    public static function isPermit(string $cond) {
-        if (isset($GLOBALS['session'])) {
-            $session = $GLOBALS['session'];
-            if ($session != null) {
-                $cond = eval('return '.$cond.';');
-                if ($cond) {
-                    return new \Response();
-                }
-            }
-        }
-
-        (new \Response(\Response::HTTP_403_FORBIDDEN))->render();
-    }
 }

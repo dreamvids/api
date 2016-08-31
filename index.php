@@ -30,6 +30,7 @@ require_once SYSTEM.'Response.php';
 require_once SYSTEM.'Validator.php';
 require_once SYSTEM.'JsonException.php';
 require_once SYSTEM.'Router.php';
+require_once SYSTEM.'PermChecker.php';
 
 // Beans
 require_once BEANS.'APIClient.php';
