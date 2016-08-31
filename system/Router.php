@@ -10,7 +10,8 @@ class Router {
     private static $instance = null;
     public static $controllers = [
         'home',
-        'user'
+        'user',
+        'session'
     ];
 
     private $controller = null;

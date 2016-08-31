@@ -25,7 +25,6 @@ class APIClient {
                     \Request::get()->getMethod(),
                     $_POST
                 ];
-                var_dump(json_encode($data));
                 $received_hash = $_SERVER['HTTP_X_HASH'];
                 $calculated_hash = hash_hmac('sha512', json_encode($data), $client->getPrivateKey());
 

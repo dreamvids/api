@@ -8,7 +8,7 @@
  */
 class UserCtrl implements ControllerInterface {
     public static function fetch(): Response {
-        $rep = new Response();
+        $rep = \Model\Session::isPermit('$session->user->rank->getName() == "Admin"');
         $rep->addData('users', Persist::fetchAll('User'));
         return $rep;
     }
@@ -63,14 +63,14 @@ class UserCtrl implements ControllerInterface {
             );
             $id = Persist::create($user);
             $user->setId($id);
-            $rep->setCode(201);
+            $rep->setCode(Response::HTTP_201_CREATED);
             $rep->addData('user', $user);
             return $rep;
         } else {
             $rep->addError('errors', $validation->getErrors());
         }
 
-        $rep->setCode(400);
+        $rep->setCode(Response::HTTP_400_BAD_REQUEST);
         return $rep;
     }
 
@@ -145,7 +145,7 @@ class UserCtrl implements ControllerInterface {
                 $rep->addError('errors', $validation->getErrors());
             }
 
-            $rep->setCode(400);
+            $rep->setCode(Response::HTTP_400_BAD_REQUEST);
             return $rep;
         }
 

@@ -36,9 +36,11 @@ require_once BEANS.'APIClient.php';
 require_once BEANS.'APIPermission.php';
 require_once BEANS.'User.php';
 require_once BEANS.'Rank.php';
+require_once BEANS.'Session.php';
 
 // Models
 require_once MODELS.'APIClient.php';
+require_once MODELS.'Session.php';
 
 // Controller
 require_once Router::get()->getPathToRequire();
@@ -79,6 +81,7 @@ else {
 }
 
 $client = \Model\APIClient::authenticate();
+$session = \Model\Session::authenticate();
 if ($client != null) {
 	if (\Model\APIClient::hasPermission($client, $_METHODS)) {
 		$rep = $classname::$methodname();
