@@ -53,7 +53,9 @@ class User implements \Resourcable, \JsonSerializable {
      * @since 5.4.0
      */
     public function jsonSerialize(): array {
-        return get_object_vars($this);
+        $copy = clone $this;
+        unset($copy->password, $copy->rank_id);
+        return get_object_vars($copy);
     }
 
     /**

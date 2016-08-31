@@ -9,7 +9,7 @@
 namespace Bean;
 
 
-class Rank implements \Resourcable {
+class Rank implements \Resourcable, \JsonSerializable {
     private $id;
     private $name;
 
@@ -21,6 +21,17 @@ class Rank implements \Resourcable {
     public function __construct(int $id = 0, string $name = '') {
         $this->id = $id;
         $this->name = $name;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize() {
+        return get_object_vars($this);
     }
 
     public static function getTableName(): string {

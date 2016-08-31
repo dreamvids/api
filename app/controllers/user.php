@@ -96,35 +96,34 @@ class UserCtrl implements ControllerInterface {
         if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
             $user = Persist::read('User', Request::get()->getArg(1));
             $validation = new Validator([
-                Validator::RULE_ALL => [
-                    Validator::PARAM_REQUIRED => true,
-                    Validator::PARAM_MESSAGES => [
-                        Validator::PARAM_REQUIRED => 'All fields must be filled'
-                    ]
-                ],
                 'email' => [
+                    Validator::PARAM_REQUIRED => true,
                     Validator::PARAM_TYPE => Validator::TYPE_EMAIL,
                     Validator::PARAM_CUSTOM => function(string $value): bool {
                         $user = Persist::read('User', Request::get()->getArg(1));
                         return ($user->getEmail() == $value || !Persist::exists('User', 'email', $value));
                     },
                     Validator::PARAM_MESSAGES => [
+                        Validator::PARAM_REQUIRED => 'E-Mail address can\'t be empty',
                         Validator::PARAM_TYPE => 'Invalid E-Mail address',
                         Validator::PARAM_CUSTOM => 'E-Mail address already registered'
                     ]
                 ],
                 'username' => [
+                    Validator::PARAM_REQUIRED => true,
                     Validator::PARAM_CUSTOM => function(string $value): bool {
                         $user = Persist::read('User', Request::get()->getArg(1));
                         return ($user->getUsername() == $value || !Persist::exists('User', 'username', $value));
                     },
                     Validator::PARAM_MAX_LENGTH => 40,
                     Validator::PARAM_MESSAGES => [
+                        Validator::PARAM_REQUIRED => 'Username can\'t be empty',
                         Validator::PARAM_CUSTOM => 'Username already taken',
                         Validator::PARAM_MAX_LENGTH => 'Username too long (max 40 chars)'
                     ]
                 ],
                 'password' => [
+                    Validator::PARAM_REQUIRED => false,
                     Validator::PARAM_MIN_LENGTH => 8,
                     Validator::PARAM_MESSAGES => [
                         Validator::PARAM_MIN_LENGTH => 'Password too short (min 8 chars)'
@@ -135,7 +134,7 @@ class UserCtrl implements ControllerInterface {
             if ($validation->validate()) {
                 $user->setUsername($_POST['username']);
                 $user->setEmail($_POST['email']);
-                if ($user->getPassword() != $_POST['password']) {
+                if (isset($_POST['password']) && $_POST['password'] != '') {
                     $user->setPassword(PasswordManager::generateHash($_POST['password']));
                 }
                 Persist::update($user);
