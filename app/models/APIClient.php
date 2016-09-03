@@ -10,6 +10,8 @@ namespace Model;
 
 
 class APIClient {
+    private static $client = null;
+
     public static function authenticate() {
         if (\Config::get()->read('config.debug')) {
             return new \Bean\APIClient(0, 'root', 'localhost', 'root', 'root');
@@ -21,7 +23,7 @@ class APIClient {
                 $data = [
                     $client->getName(),
                     $client->getDomain(),
-                    $_GET['arg'],
+                    $_GET['arg'] ?? '',
                     \Request::get()->getMethod(),
                     $_POST
                 ];
@@ -33,6 +35,14 @@ class APIClient {
         }
 
         return null;
+    }
+
+    public static function getClient() {
+        if (self::$client == null) {
+            self::$client = self::authenticate();
+        }
+
+        return self::$client;
     }
 
     public static function hasPermission(\Bean\APIClient $client, array $methods): bool {

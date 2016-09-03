@@ -71,7 +71,8 @@ class SessionCtrl implements ControllerInterface {
     }
 
     public static function read(): Response {
-        return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
+        $rep = new Response();
+        //return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
     }
 
     public static function update(): Response {

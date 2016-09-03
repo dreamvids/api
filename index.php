@@ -1,5 +1,5 @@
 <?php
-define('NAME', 'MVC');
+define('NAME', 'DreamVids API');
 define('ROOT', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']), true);
 define('WEBROOT', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']), true);
 define('BEANS', ROOT.'beans/');
@@ -35,6 +35,7 @@ require_once SYSTEM.'PermChecker.php';
 // Beans
 require_once BEANS.'APIClient.php';
 require_once BEANS.'APIPermission.php';
+require_once BEANS.'APIAuthToken.php';
 require_once BEANS.'User.php';
 require_once BEANS.'Rank.php';
 require_once BEANS.'Session.php';
@@ -81,8 +82,8 @@ else {
 	(new Response(Response::HTTP_405_METHOD_NOT_ALLOWED))->render();
 }
 
-$client = \Model\APIClient::authenticate();
-$session = \Model\Session::authenticate();
+$client = \Model\APIClient::getClient();
+$session = \Model\Session::getSession();
 if ($client != null) {
 	if (\Model\APIClient::hasPermission($client, $_METHODS)) {
 		$rep = $classname::$methodname();

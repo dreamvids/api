@@ -142,4 +142,12 @@ abstract class Persist {
         $req = DB::get()->prepare("DELETE FROM $table_name WHERE $column = ?");
         $req->execute([$value]);
     }
+
+    public static function deleteByCond(string $classname, string $cond = '', array $values = []) {
+        $classname = '\Bean\\'.$classname;
+        $table_name = $classname::getTableName();
+        $cond = ($cond != '') ? ' '.$cond : '';
+        $req = DB::get()->prepare("DELETE FROM $table_name".$cond);
+        $req->execute($values);
+    }
 }

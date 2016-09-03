@@ -12,7 +12,7 @@ class PermChecker {
 
     private function __construct() {
         $this->is_permit = true;
-        $this->session = $GLOBALS['session'] ?? null;
+        $this->session = \Model\Session::getSession();
         if ($this->session == null) {
             (new Response(Response::HTTP_403_FORBIDDEN))->render();
         }

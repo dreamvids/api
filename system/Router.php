@@ -11,7 +11,8 @@ class Router {
     public static $controllers = [
         'home',
         'user',
-        'session'
+        'session',
+        'token'
     ];
 
     private $controller = null;
