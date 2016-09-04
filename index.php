@@ -51,7 +51,6 @@ $classname = ucfirst(Request::get()->getArg(0)).'Ctrl';
 if (Request::get()->getArg(1) != '') {
 	$_METHODS = [
 		'GET' => 'read',
-		'HEAD' => 'exists',
 		'PATCH' => 'update',
 		'DELETE' => 'delete'
 	];

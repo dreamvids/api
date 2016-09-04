@@ -8,7 +8,15 @@
  */
 class SessionCtrl implements ControllerInterface {
     public static function fetch(): Response {
-        return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
+        if (\Model\APIClient::getClient()->isAdmin()) {
+            $sessions = Persist::fetchAll('Session');
+        }
+        else {
+            $sessions = Persist::fetchAll('Session', "WHERE client_id = ?", [\Model\APIClient::getClient()->getId()]);
+        }
+        $rep = new Response();
+        $rep->addData('sessions', $sessions);
+        return $rep;
     }
 
     public static function create(): Response {
@@ -52,6 +60,7 @@ class SessionCtrl implements ControllerInterface {
                 $expiration
             );
             $session->setUserId($user->getId());
+            $session->setClientId(\Model\APIClient::getClient()->getId());
             $id = Persist::create($session);
             $session->setId($id);
             $rep->setCode(Response::HTTP_201_CREATED);
@@ -66,13 +75,17 @@ class SessionCtrl implements ControllerInterface {
         return $rep;
     }
 
-    public static function exists(): Response {
-        return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
-    }
-
     public static function read(): Response {
         $rep = new Response();
-        //return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
+        if (Persist::exists('Session', 'session_id', Request::get()->getArg(1))) {
+            $session = Persist::readBy('Session', 'session_id', Request::get()->getArg(1));
+            $rep = PermChecker::get()->clientId($session->getClientId())->or(PermChecker::get()->clientAdmin())->isPermit();
+            $rep->addData('session', $session);
+        }
+        else {
+            $rep->setCode(Response::HTTP_404_NOT_FOUND);
+        }
+        return $rep;
     }
 
     public static function update(): Response {
@@ -83,7 +96,9 @@ class SessionCtrl implements ControllerInterface {
         $rep = new Response();
         if (preg_match("#^[0-9a-f]{40}$#", Request::get()->getArg(1))) {
             if (Persist::exists('Session', 'session_id', Request::get()->getArg(1))) {
-                Persist::deleteBy('Session', 'session_id', Request::get()->getArg(1));
+                $session = Persist::readBy('Session', 'session_id', Request::get()->getArg(1));
+                $rep = PermChecker::get()->userId(\Model\Session::getSession()->user->getId())->clientId($session->getClientId())->or(PermChecker::get()->clientAdmin())->isPermit();
+                Persist::delete($session);
                 $rep->addData('success', 'Session successfully terminated');
             }
             else {
@@ -93,6 +108,7 @@ class SessionCtrl implements ControllerInterface {
         }
         else {
             if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
+                $rep = PermChecker::get()->clientAdmin()->isPermit();
                 Persist::deleteBy('Session', 'user_id', Request::get()->getArg(1));
                 $rep->addData('success', 'Sessions successfully terminated');
             }

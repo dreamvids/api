@@ -14,6 +14,7 @@ class Session implements \Resourcable, \JsonSerializable {
     private $session_id;
     private $expiration_timestamp;
     private $user_id;
+    private $client_id;
 
     /**
      * Session constructor.
@@ -21,12 +22,14 @@ class Session implements \Resourcable, \JsonSerializable {
      * @param $session_id
      * @param $expiration_timestamp
      * @param $user_id
+     * @param $client_id
      */
-    public function __construct(int $id = 0, string $session_id = '', int $expiration_timestamp = 0, int $user_id = 0) {
+    public function __construct(int $id = 0, string $session_id = '', int $expiration_timestamp = 0, int $user_id = 0, int $client_id = 0) {
         $this->id = $id;
         $this->session_id = $session_id;
         $this->expiration_timestamp = $expiration_timestamp;
         $this->user_id = $user_id;
+        $this->client_id = $client_id;
     }
 
     public static function getTableName(): string {
@@ -101,5 +104,20 @@ class Session implements \Resourcable, \JsonSerializable {
     public function setUserId($user_id) {
         $this->user_id = $user_id;
         $this->user = \Persist::read('User', $user_id);
+    }
+
+    /**
+     * @return int
+     */
+    public function getClientId() {
+        return $this->client_id;
+    }
+
+    /**
+     * @param int $client_id
+     */
+    public function setClientId($client_id) {
+        $this->client_id = $client_id;
+        $this->client = \Persist::read('APIClient', $client_id);
     }
 }

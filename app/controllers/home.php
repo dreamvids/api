@@ -10,10 +10,6 @@ class HomeCtrl implements ControllerInterface {
         return new Response(Response::HTTP_201_CREATED);
     }
 
-    public static function exists(): Response {
-        return new Response(Response::HTTP_409_CONFLICT);
-    }
-
     public static function read(): Response {
         $rep = new Response();
         $rep->addData('id', Request::get()->getArg(1));

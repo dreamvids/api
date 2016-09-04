@@ -15,6 +15,7 @@ class APIClient implements \Resourcable {
     private $domain;
     private $public_key;
     private $private_key;
+    private $admin;
 
     /**
      * APIClient constructor.
@@ -23,13 +24,15 @@ class APIClient implements \Resourcable {
      * @param $domain
      * @param $public_key
      * @param $private_key
+     * @param $admin
      */
-    public function __construct(int $id = 0, string $name = '', string $domain = '', string $public_key = '', string $private_key = '') {
+    public function __construct(int $id = 0, string $name = '', string $domain = '', string $public_key = '', string $private_key = '', bool $admin = false) {
         $this->id = $id;
         $this->name = $name;
         $this->domain = $domain;
         $this->public_key = $public_key;
         $this->private_key = $private_key;
+        $this->admin = $admin;
     }
 
     public static function getTableName(): string {
@@ -106,4 +109,24 @@ class APIClient implements \Resourcable {
         $this->private_key = $private_key;
     }
 
+    /**
+     * @return boolean
+     */
+    public function isAdmin() {
+        return $this->admin;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAdmin() {
+        return $this->admin;
+    }
+
+    /**
+     * @param boolean $admin
+     */
+    public function setAdmin($admin) {
+        $this->admin = $admin;
+    }
 }

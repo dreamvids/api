@@ -42,13 +42,10 @@ class TokenCtrl implements ControllerInterface {
         return $rep;
     }
 
-    public static function exists(): Response {
-        return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
-    }
-
     public static function read(): Response {
         $rep = new Response();
         if (Persist::exists('APIAuthToken', 'token', Request::get()->getArg(1))) {
+            $rep = PermChecker::get()->clientId(\Model\APIClient::getClient()->getId())->or(PermChecker::get()->clientAdmin())->isPermit();
             $rep->addData('token', Persist::readBy('APIAuthToken', 'token', Request::get()->getArg(1)));
             return $rep;
         }

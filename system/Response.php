@@ -83,12 +83,7 @@ class Response
     }
 
     protected function renderHeaders(){
-        if (Request::get()->getMethod() != 'HEAD') {
-            header('Content-type: application/json; charset=utf-8');
-        }
-        else {
-            header('Content-length: 0');
-        }
+        header('Content-type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
         header('HTTP/1.1 ' . $this->code . " " . self::$codes[$this->code]);
     }

@@ -15,7 +15,6 @@ class APIAuthToken implements \Resourcable, \JsonSerializable {
     private $redirect_url;
     private $expiration;
     private $client_id;
-    private $session_id;
 
     /**
      * APIAuthToken constructor.
@@ -24,15 +23,13 @@ class APIAuthToken implements \Resourcable, \JsonSerializable {
      * @param $redirect_url
      * @param $expiration
      * @param $client_id
-     * @param $session_id
      */
-    public function __construct(int $id = 0, string $token = '', $redirect_url = '', int $expiration = 0, int $client_id = 0, $session_id = null) {
+    public function __construct(int $id = 0, string $token = '', $redirect_url = '', int $expiration = 0, int $client_id = 0) {
         $this->id = $id;
         $this->token = $token;
         $this->redirect_url = $redirect_url;
         $this->expiration = $expiration;
         $this->client_id = $client_id;
-        $this->session_id = $session_id;
     }
 
     public static function getTableName(): string {
@@ -112,22 +109,5 @@ class APIAuthToken implements \Resourcable, \JsonSerializable {
     public function setClientId($client_id) {
         $this->client_id = $client_id;
         $this->client = \Persist::read('APIClient', $client_id);
-    }
-
-    /**
-     * @return int
-     */
-    public function getSessionId() {
-        return $this->session_id;
-    }
-
-    /**
-     * @param int $session_id
-     */
-    public function setSessionId($session_id) {
-        $this->session_id = $session_id;
-        if ($session_id != null) {
-            $this->session = \Persist::readBy('Session', 'session_id', $session_id);
-        }
     }
 }

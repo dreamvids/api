@@ -8,7 +8,7 @@
  */
 class UserCtrl implements ControllerInterface {
     public static function fetch(): Response {
-        $rep = PermChecker::get()->rank('Admin')->isPermit();
+        $rep = PermChecker::get()->clientAdmin()->isPermit();
         $rep->addData('users', Persist::fetchAll('User'));
         return $rep;
     }
@@ -74,18 +74,9 @@ class UserCtrl implements ControllerInterface {
         return $rep;
     }
 
-    public static function exists(): Response {
-        return new Response(Response::HTTP_405_METHOD_NOT_ALLOWED);
-        /*if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
-            return new Response(Response::HTTP_200_OK);
-        }
-
-        return new Response(Response::HTTP_404_NOT_FOUND);*/
-    }
-
     public static function read(): Response {
         if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
-            $rep = PermChecker::get()->id(Request::get()->getArg(1))->or(PermChecker::get()->rank('Admin'))->isPermit();
+            $rep = PermChecker::get()->userId(Request::get()->getArg(1))->or(PermChecker::get()->clientAdmin())->isPermit();
             $rep->addData('user', Persist::read('User', Request::get()->getArg(1)));
             return $rep;
         }
@@ -95,7 +86,7 @@ class UserCtrl implements ControllerInterface {
 
     public static function update(): Response {
         if (Persist::exists('User', 'id', Request::get()->getArg(1))) {
-            $rep = PermChecker::get()->id(Request::get()->getArg(1))->or(PermChecker::get()->rank('Admin'))->isPermit();
+            $rep = new Response();
             $user = Persist::read('User', Request::get()->getArg(1));
             $validation = new Validator([
                 'email' => [

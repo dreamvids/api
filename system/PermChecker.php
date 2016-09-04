@@ -9,10 +9,12 @@
 class PermChecker {
     private $is_permit;
     private $session;
+    private $client;
 
     private function __construct() {
         $this->is_permit = true;
         $this->session = \Model\Session::getSession();
+        $this->client = \Model\APIClient::getClient();
         if ($this->session == null) {
             (new Response(Response::HTTP_403_FORBIDDEN))->render();
         }
@@ -27,7 +29,7 @@ class PermChecker {
         return $this;
     }
 
-    public function rank($values): PermChecker {
+    public function userRank($values): PermChecker {
         if (is_array($values)) {
             $perm = false;
             foreach ($values as $v) {
@@ -45,7 +47,7 @@ class PermChecker {
         return $this;
     }
 
-    public function id($values): PermChecker {
+    public function userId($values): PermChecker {
         if (is_array($values)) {
             $perm = false;
             foreach ($values as $v) {
@@ -60,6 +62,29 @@ class PermChecker {
         }
 
         $this->is_permit = $perm;
+        return $this;
+    }
+
+    public function clientId($values): PermChecker {
+        if (is_array($values)) {
+            $perm = false;
+            foreach ($values as $v) {
+                if ($this->client->getId() == $v) {
+                    $perm = true;
+                    break;
+                }
+            }
+        }
+        else {
+            $perm = ($this->client->getId() == $values);
+        }
+
+        $this->is_permit = $perm;
+        return $this;
+    }
+
+    public function clientAdmin(): PermChecker {
+        $this->is_permit = $this->client->isAdmin();
         return $this;
     }
 
