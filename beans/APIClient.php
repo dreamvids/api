@@ -9,7 +9,7 @@
 namespace Bean;
 
 
-class APIClient implements \Resourcable {
+class APIClient implements \Resourcable, \JsonSerializable {
     private $id;
     private $name;
     private $domain;
@@ -37,6 +37,12 @@ class APIClient implements \Resourcable {
 
     public static function getTableName(): string {
         return 'api_client';
+    }
+
+    public function jsonSerialize() {
+        $copy = clone $this;
+        unset($copy->private_key);
+        return get_object_vars($copy);
     }
 
     /**
