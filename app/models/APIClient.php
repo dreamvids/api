@@ -14,7 +14,7 @@ class APIClient {
 
     public static function authenticate() {
         if (\Config::get()->read('config.debug')) {
-            return new \Bean\APIClient(0, 'root', 'localhost', 'root', 'root');
+            return new \Bean\APIClient(0, 'root', 'localhost', 'root', 'root', true);
         }
 
         if (isset($_SERVER['HTTP_X_PUBLIC'], $_SERVER['HTTP_X_HASH'])) {
