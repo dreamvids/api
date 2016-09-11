@@ -15,9 +15,6 @@ class PermChecker {
         $this->is_permit = true;
         $this->session = \Model\Session::getSession();
         $this->client = \Model\APIClient::getClient();
-        if ($this->session == null) {
-            (new Response(Response::HTTP_403_FORBIDDEN))->render();
-        }
     }
 
     public static function get(): PermChecker {
@@ -32,10 +29,12 @@ class PermChecker {
     public function userRank($values): PermChecker {
         if (is_array($values)) {
             $perm = false;
-            foreach ($values as $v) {
-                if ($this->session->user->rank->getName() == $v) {
-                    $perm = true;
-                    break;
+            if ($this->session != null) {
+                foreach ($values as $v) {
+                    if ($this->session->user->rank->getName() == $v) {
+                        $perm = true;
+                        break;
+                    }
                 }
             }
         }
@@ -50,10 +49,12 @@ class PermChecker {
     public function userId($values): PermChecker {
         if (is_array($values)) {
             $perm = false;
-            foreach ($values as $v) {
-                if ($this->session->user->getId() == $v) {
-                    $perm = true;
-                    break;
+            if ($this->session != null) {
+                foreach ($values as $v) {
+                    if ($this->session->user->getId() == $v) {
+                        $perm = true;
+                        break;
+                    }
                 }
             }
         }
