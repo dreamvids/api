@@ -9,12 +9,6 @@ define('APP', ROOT.'app/');
 define('MODELS', APP.'models/');
 define('VIEWS', APP.'views/');
 define('CONTROLLERS', APP.'controllers/');
-define('ASSETS', WEBROOT.'assets/');
-define('CSS', ASSETS.'css/');
-define('JS', ASSETS.'js/');
-define('FONTS', ASSETS.'fonts/');
-define('IMG', ASSETS.'img/');
-
 
 // System requires
 require_once SYSTEM.'ModelInterface.php';
