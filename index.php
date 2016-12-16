@@ -65,7 +65,7 @@ if (isset($_METHODS[Request::get()->getMethod()])) {
 		try{
 			Request::get()->decodeBody();
 		}catch (JsonException $e){
-			$response = new Response(Response::HTTP_404_NOT_FOUND);
+			$response = new Response(Response::HTTP_400_BAD_REQUEST);
 			$response->addError("json", $e->getMessage());
 			$response->render();
 		}

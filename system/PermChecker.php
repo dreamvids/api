@@ -22,7 +22,7 @@ class PermChecker {
     }
 
     public function or(PermChecker $permChecker): PermChecker {
-        $this->is_permit = ($permChecker->isItPermitted() || $this->is_permit);
+        $this->is_permit = ($this->is_permit || $permChecker->isItPermitted());
         return $this;
     }
 
@@ -39,7 +39,7 @@ class PermChecker {
             }
         }
         else {
-            $perm = ($this->session->user->rank->getName() == $values);
+            $perm = (Config::get()->read('config.debug') || $this->session->user->rank->getName() == $values);
         }
 
         $this->is_permit = $perm;
@@ -59,7 +59,7 @@ class PermChecker {
             }
         }
         else {
-            $perm = ($this->session->user->getId() == $values);
+            $perm = (Config::get()->read('config.debug') || $this->session->user->getId() == $values);
         }
 
         $this->is_permit = $perm;
