@@ -33,6 +33,7 @@ require_once BEANS.'APIAuthToken.php';
 require_once BEANS.'User.php';
 require_once BEANS.'Rank.php';
 require_once BEANS.'Session.php';
+require_once BEANS.'Channel.php';
 
 // Models
 require_once MODELS.'APIClient.php';

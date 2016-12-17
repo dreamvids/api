@@ -12,7 +12,8 @@ class Router {
         'home',
         'user',
         'session',
-        'token'
+        'token',
+        'channel'
     ];
 
     private $controller = null;
