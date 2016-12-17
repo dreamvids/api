@@ -4,3 +4,4 @@
 .idea/
 pull.php
 config/database.php
+config/config.php
