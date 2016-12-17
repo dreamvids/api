@@ -8,7 +8,7 @@
 class ChannelCtrl implements ControllerInterface {
     public static function fetch(): Response {
         $rep = PermChecker::get()->clientAdmin()->isPermit();
-        $rep->addData('channel', Persist::fetchAll('Channel'));
+        $rep->addData('channels', Persist::fetchAll('Channel'));
         return $rep;
     }
 

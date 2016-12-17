@@ -49,10 +49,10 @@ class Channel implements \Resourcable, \JsonSerializable {
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    function jsonSerialize() {
+    public function jsonSerialize(): array {
         $copy = clone $this;
         unset($copy->user_id);
-        return $copy;
+        return get_object_vars($copy);
     }
 
     /**
