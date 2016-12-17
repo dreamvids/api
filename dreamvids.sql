@@ -261,14 +261,6 @@ CREATE TABLE `dv_session` (
   `client_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Dumping data for table `dv_session`
---
-
-INSERT INTO `dv_session` (`id`, `session_id`, `expiration_timestamp`, `user_id`, `client_id`) VALUES
-(14, '562280697aeee383c2c48da374a253c66194c306', 1504532864, 6, 3),
-(17, '6e70967652a1523620d01ae8a95e2b98235c5da2', 1504541475, 11, 3);
-
 -- --------------------------------------------------------
 
 --
@@ -297,16 +289,6 @@ CREATE TABLE `dv_user` (
   `current_ip` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `rank_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `dv_user`
---
-
-INSERT INTO `dv_user` (`id`, `username`, `password`, `email`, `reg_timestamp`, `reg_ip`, `current_ip`, `rank_id`) VALUES
-(6, 'PHPeter', '$2y$10$CbNrOATkPenAvSU0VhLcf.j/xFCAIoDd3cFe0AxvPQR8NLaqd9FNy', 'peter@dreamvids.fr', 1472461100, '::1', '::1', 3),
-(7, 'Test', '$2y$10$mkWpd/FtqnWWrn0jLvbvC.GLvzB4DjHAXbNUbBk31VUS6bUnAkPcC', 'test@test.dev', 1472642759, '::1', '::1', 1),
-(8, 'ClientTest', '$2y$10$lo4tlQHUseUUosFjEvMOCeuGxQuFtKAYvAojTBvcDFhXDEwwaVNKa', 'test@api.client', 1472768518, '127.0.0.1', '127.0.0.1', 1),
-(11, 'Website', '$2y$10$g89MGbNE0uy/ZLa6gY0ShOf9WF1fdaxfnir4FEClxzsPRDE50bjee', 'test@website.client', 1473005475, '10.0.2.2', '10.0.2.2', 1);
 
 -- --------------------------------------------------------
 
