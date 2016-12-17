@@ -5,5 +5,5 @@ return [
     'host' => '127.0.0.1',
     'dbname' => 'dreamvids-api',
     'username' => 'root',
-    'password' => 'cvbn974'
+    'password' => ''
 ];
