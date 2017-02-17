@@ -61,8 +61,19 @@ class UserCtrl implements ControllerInterface {
                 $_POST['ip'],
                 Persist::readBy('Rank', 'name', 'Member')->getId()
             );
-            $id = Persist::create($user);
-            $user->setId($id);
+            $user_id = Persist::create($user);
+            $user->setId($user_id);
+            $channel = new \Bean\Channel(
+                0,
+                $_POST['username'],
+                '',
+                '',
+                '',
+                false,
+                $user->getId()
+            );
+            $channel_id = Persist::create($channel);
+            $channel->setId($channel_id);
             $rep->setCode(Response::HTTP_201_CREATED);
             $rep->addData('user', $user);
             return $rep;
